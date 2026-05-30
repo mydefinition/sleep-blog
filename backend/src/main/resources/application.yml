@@ -1,0 +1,38 @@
+﻿server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:sqlite:blog.db
+    driver-class-name: org.sqlite.JDBC
+  sql:
+    init:
+      mode: always
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+springdoc:
+  swagger-ui:
+    enabled: true
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+app:
+  jwt:
+    secret: sample-blog-secret-key-must-be-at-least-256-bits-long
+    expiration: 86400000
+  upload:
+    dir: D:/codex/sample-blog/backend/uploads

@@ -1,0 +1,64 @@
+package com.blog.controller;
+
+import com.blog.common.Result;
+import com.blog.dto.ArticleDto;
+import com.blog.dto.ArticleListDto;
+import com.blog.dto.request.ArticleRequest;
+import com.blog.security.SecurityUtils;
+import com.blog.service.ArticleService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/articles")
+@Tag(name = "文章管理")
+public class ArticleController {
+
+    private final ArticleService articleService;
+
+    public ArticleController(ArticleService articleService) {
+        this.articleService = articleService;
+    }
+
+    @GetMapping
+    @Operation(summary = "获取文章列表")
+    public Result<?> list(@RequestParam(required = false) String tagIds,
+                          @RequestParam(defaultValue = "1") int page,
+                          @RequestParam(defaultValue = "10") int size) {
+        IPage<ArticleListDto> result = articleService.list(tagIds, page, size);
+        return Result.ok(result);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "获取文章详情")
+    public Result<?> getById(@PathVariable Long id) {
+        ArticleDto article = articleService.getById(id);
+        return Result.ok(article);
+    }
+
+    @PostMapping
+    @Operation(summary = "发布文章")
+    public Result<?> create(@RequestBody ArticleRequest req) {
+        SecurityUtils.requireAdmin();
+        articleService.create(SecurityUtils.getCurrentUserId(), req);
+        return Result.ok();
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "编辑文章")
+    public Result<?> update(@PathVariable Long id, @RequestBody ArticleRequest req) {
+        SecurityUtils.requireAdmin();
+        articleService.update(id, req);
+        return Result.ok();
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "删除文章")
+    public Result<?> deleteArticle(@PathVariable Long id) {
+        SecurityUtils.requireAdmin();
+        articleService.delete(id);
+        return Result.ok();
+    }
+}
