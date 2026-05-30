@@ -1,4 +1,4 @@
-server:
+﻿server:
   port: 8080
 
 spring:
@@ -37,3 +37,4 @@ app:
     expiration: 86400000
   upload:
     dir: ./uploads
+  super-secret: super-secret-change-me

@@ -1,16 +1,13 @@
-<template>
+﻿<template>
   <div class="article-detail" v-if="article">
-    <!-- 左侧目录 -->
     <aside class="toc-sidebar" :style="{ '--progress': progressPercent }">
       <p class="toc-title">目录</p>
       <MdCatalog editorId="article-preview" scrollElement="html" />
     </aside>
 
-    <!-- 正文区域 -->
     <div class="article-main" ref="mainRef">
       <h1>{{ article.title }}</h1>
 
-      <!-- 元信息 -->
       <div class="meta">
         <span class="card-date">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
@@ -25,15 +22,12 @@
         <button v-if="auth.isAdmin" @click="deleteArticle" class="del-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> 删除</button>
       </div>
 
-      <!-- 标签 -->
       <div class="tags" v-if="article.tags.length">
         <span v-for="t in article.tags" :key="t.id" class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg> {{ t.name }}</span>
       </div>
 
-      <!-- 分隔线 -->
       <div class="cut-line"><span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform: scaleX(-1)"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg></div>
 
-      <!-- Markdown 正文 -->
       <div class="content-wrap">
         <MdPreview
           id="article-preview"
@@ -43,7 +37,17 @@
         />
       </div>
 
-      <!-- 评论区 -->
+      <nav class="article-nav" v-if="neighbors.prev || neighbors.next">
+        <router-link v-if="neighbors.prev" :to="'/articles/' + neighbors.prev.id" class="nav-prev">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          {{ neighbors.prev.title }}
+        </router-link>
+        <router-link v-if="neighbors.next" :to="'/articles/' + neighbors.next.id" class="nav-next">
+          {{ neighbors.next.title }}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </router-link>
+      </nav>
+
       <section class="comments">
         <h3>评论 ({{ comments.length }})</h3>
         <div v-if="auth.isLoggedIn" class="comment-form">
@@ -65,7 +69,6 @@
     </div>
   </div>
 
-  <!-- 加载中 -->
   <div v-else-if="loading" class="loading-wrap"><span class="spinner"></span></div>
 </template>
 
@@ -84,45 +87,71 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const settings = useSettingsStore()
-
 const article = ref<Article | null>(null)
 const comments = ref<Comment[]>([])
 const commentText = ref('')
 const loading = ref(true)
+const displayContent = computed(() => article.value?.content || '')
 
-// 正文（剥离冗余首行标题）
-const displayContent = computed(() => {
-  if (!article.value) return ''
-  return article.value.content || ''
+const allArticles = ref<Article[]>([])
+const neighbors = computed(() => {
+  const idx = allArticles.value.findIndex(a => a.id === Number(route.params.id))
+  return {
+    prev: idx < allArticles.value.length - 1 ? allArticles.value[idx + 1] : null,
+    next: idx > 0 ? allArticles.value[idx - 1] : null,
+  }
 })
 
 async function fetchArticle() {
-  const res = await api.get('/api/articles/' + route.params.id)
-  article.value = res.data
-  loading.value = false
+  try {
+    const res = await api.get('/api/articles/' + route.params.id)
+    article.value = res.data
+  } catch {
+    router.push('/articles')
+  } finally {
+    loading.value = false
+  }
+}
+
+async function fetchAll() {
+  try {
+    const res = await api.get('/api/articles?page=1&size=9999')
+    allArticles.value = res.data.records || []
+  } catch {}
 }
 
 async function fetchComments() {
-  const res = await api.get('/api/articles/' + route.params.id + '/comments')
-  comments.value = res.data
+  try {
+    const res = await api.get('/api/articles/' + route.params.id + '/comments')
+    comments.value = res.data || []
+  } catch {}
 }
 
 async function postComment() {
   if (!commentText.value.trim()) return
-  await api.post('/api/articles/' + route.params.id + '/comments', { content: commentText.value })
-  commentText.value = ''
-  fetchComments()
+  try {
+    await api.post('/api/articles/' + route.params.id + '/comments', { content: commentText.value })
+    commentText.value = ''
+    await fetchComments()
+  } catch (e: any) {
+    alert(e.message || '发表失败')
+  }
 }
 
 async function deleteComment(id: number) {
-  await api.delete('/api/comments/' + id)
-  fetchComments()
+  if (!confirm('确定删除该评论？')) return
+  try {
+    await api.delete('/api/comments/' + id)
+    await fetchComments()
+  } catch (e: any) {
+    alert(e.message || '删除失败')
+  }
 }
 
 async function deleteArticle() {
-  if (!confirm('确定要删除这篇文章吗？此操作不可恢复！')) return
+  if (!confirm('确定删除这篇文章？')) return
   try {
-    await api.delete('/api/articles/' + article.value!.id)
+    await api.delete('/api/articles/' + route.params.id)
     router.push('/articles')
   } catch (e: any) {
     alert(e.message || '删除失败')
@@ -133,12 +162,6 @@ function formatDate(d: string) {
   return new Date(d).toISOString().slice(0, 10)
 }
 
-onMounted(() => {
-  fetchArticle()
-  fetchComments()
-})
-
-// 目录侧进度条
 const mainRef = ref<HTMLElement | null>(null)
 const scrollProgress = ref(0)
 const progressPercent = computed(() => `${Math.round(scrollProgress.value * 100)}%`)
@@ -154,6 +177,7 @@ function onScroll() {
 
 onMounted(() => {
   fetchArticle()
+  fetchAll()
   fetchComments()
   window.addEventListener('scroll', onScroll, { passive: true })
 })
@@ -161,11 +185,9 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
 })
-
 </script>
 
 <style scoped>
-/* ====== 整体布局 ====== */
 .article-detail {
   display: flex;
   gap: 2.5rem;
@@ -174,29 +196,6 @@ onUnmounted(() => {
   padding: 2rem 1rem;
   align-items: flex-start;
 }
-
-/* ====== 左侧目录 ====== */
-.toc-sidebar {
-  width: 200px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 68px;
-  max-height: calc(100vh - 80px);
-  overflow-y: auto;
-  font-size: 0.85rem;
-}
-
-.toc-title {
-  font-size: 0.8rem;
-  color: #999;
-  letter-spacing: 0.1em;
-  margin: 0 0 0.5rem 0;
-}
-
-.toc-sidebar :deep(.md-editor-catalog-link) { color: #555; }
-.toc-sidebar :deep(.md-editor-catalog-active > span) { color: v-bind('settings.primary'); }
-.toc-sidebar :deep(.md-editor-catalog-link span:hover) { color: v-bind('settings.primary'); }
-.toc-sidebar :deep(.md-editor-catalog-indicator) { background: v-bind('settings.primary'); }
 
 .toc-sidebar {
   width: 200px;
@@ -214,7 +213,18 @@ onUnmounted(() => {
   ) 1;
 }
 
-/* ====== 正文 ====== */
+.toc-title {
+  font-size: 0.8rem;
+  color: #999;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.5rem 0;
+}
+
+.toc-sidebar :deep(.md-editor-catalog-link) { color: #555; }
+.toc-sidebar :deep(.md-editor-catalog-active > span) { color: v-bind('settings.primary'); }
+.toc-sidebar :deep(.md-editor-catalog-link span:hover) { color: v-bind('settings.primary'); }
+.toc-sidebar :deep(.md-editor-catalog-indicator) { background: v-bind('settings.primary'); }
+
 .article-main { flex: 1; min-width: 0; max-width: 680px; }
 
 h1 { font-size: 1.8rem; margin-bottom: 0.5rem; padding: 0 5px 0.5rem 5px; display: inline-block; border-bottom: 3px solid v-bind("settings.primary"); }
@@ -238,12 +248,35 @@ h1 { font-size: 1.8rem; margin-bottom: 0.5rem; padding: 0 5px 0.5rem 5px; displa
 .cut-line span { flex: 1; border-bottom: 1px dashed #ddd; }
 .cut-line svg { flex-shrink: 0; }
 
-/* ====== Markdown 预览 ====== */
-.content-wrap :deep(blockquote) { border-left-color: v-bind('settings.primary'); } /* 引用框跟随主题色 */
+.content-wrap :deep(blockquote) { border-left-color: v-bind('settings.primary'); }
 .content-wrap :deep(.md-editor) { height: auto; border: none; }
 .content-wrap :deep(.md-editor-preview-wrapper) { padding: 0; }
 
-/* ====== 评论区 ====== */
+.article-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.nav-prev, .nav-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 48%;
+  color: v-bind("settings.primary");
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: opacity 0.15s;
+}
+
+.nav-prev:hover, .nav-next:hover { opacity: 0.7; }
+
+.nav-next { margin-left: auto; text-align: right; }
+
 .comments { margin-top: 3rem; border-top: 1px solid #eee; padding-top: 1.5rem; }
 .comments h3 { margin-bottom: 1rem; }
 .comment-form { margin-bottom: 1.5rem; }
@@ -255,9 +288,7 @@ h1 { font-size: 1.8rem; margin-bottom: 0.5rem; padding: 0 5px 0.5rem 5px; displa
 .comment-head { display: flex; gap: 0.8rem; align-items: center; font-size: 0.85rem; margin-bottom: 0.3rem; }
 .btn-del { margin-left: auto; padding: 0.1rem 0.5rem; border: none; background: #ff5252; color: #fff; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
 
-/* ====== 加载中 ====== */
 .loading-wrap { display: flex; justify-content: center; align-items: center; min-height: 60vh; }
 .spinner { width: 36px; height: 36px; border: 3px solid #e0e0e0; border-top-color: v-bind("settings.primary"); border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 </style>

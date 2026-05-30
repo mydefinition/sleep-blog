@@ -96,6 +96,20 @@ $$
 |---|---|---|---|
 | POST | `/api/images/upload` | 上传图片到本地 | ADMIN |
 
+
+### 管理员管理（需Header `super-token`）
+
+| 方法 | 路径 | 说明 | 权限 |
+|---|---|---|---|
+| GET | `/api/super/users` | 列出所有用户 | Header `super-token` |
+| GET | `/api/super/users/find?username=xxx` | 按用户名查用户 | Header `super-token` |
+| PUT | `/api/super/users/promote` | 提升为 ADMIN | Header `super-token` |
+| PUT | `/api/super/users/revoke` | 撤销为 USER | Header `super-token` |
+| PUT | `/api/super/users/reset-password` | 重置密码 | Header `super-token` |
+
+> 请求需带 Header `super-token`，密钥在 `application.yml` 中配置 `app.super-secret`，生产环境请务必修改。
+
+
 ## 📊 数据库设计
 
 ### user

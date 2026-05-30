@@ -27,9 +27,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResolver(new PathResourceResolver() {
                     @Override
                     protected Resource getResource(String resourcePath, Resource location) throws IOException {
+                        if (resourcePath.startsWith("api/")) {
+                            return null;
+                        }
                         Resource resource = location.createRelative(resourcePath);
                         if (resource.exists() && resource.isReadable()) {
                             return resource;
+                        }
+                        if (resourcePath.equals("doc.html") || resourcePath.startsWith("webjars/")) {
+                            Resource knife4jResource = new ClassPathResource("META-INF/resources/" + resourcePath);
+                            if (knife4jResource.exists()) {
+                                return knife4jResource;
+                            }
+                            return null;
                         }
                         return new ClassPathResource("static/index.html");
                     }

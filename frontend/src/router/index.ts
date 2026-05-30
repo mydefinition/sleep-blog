@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
+﻿import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -13,6 +14,31 @@ const router = createRouter({
     { path: '/write', name: 'write', component: () => import('@/views/WriteView.vue') },
     { path: '/write/:id', name: 'write-edit', component: () => import('@/views/WriteView.vue') },
   ]
+})
+
+router.beforeEach(async (to, _from, next) => {
+  const auth = useAuthStore()
+
+  if (auth.token && !auth.user) {
+    await auth.fetchProfile()
+  }
+
+  if (to.path.startsWith('/write') && !auth.isAdmin) {
+    next('/')
+    return
+  }
+
+  if (['/profile', '/profile/edit'].includes(to.path) && !auth.isLoggedIn) {
+    next('/login')
+    return
+  }
+
+  if (['/login', '/register'].includes(to.path) && auth.isLoggedIn) {
+    next('/')
+    return
+  }
+
+  next()
 })
 
 export default router
