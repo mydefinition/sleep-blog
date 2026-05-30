@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 8080
 
 spring:
@@ -16,6 +16,8 @@ spring:
 springdoc:
   swagger-ui:
     enabled: true
+  api-docs:
+    enabled: true
 
 knife4j:
   enable: true
@@ -25,7 +27,6 @@ knife4j:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       id-type: auto
@@ -35,4 +36,4 @@ app:
     secret: sample-blog-secret-key-must-be-at-least-256-bits-long
     expiration: 86400000
   upload:
-    dir: D:/codex/sample-blog/backend/uploads
+    dir: ./uploads

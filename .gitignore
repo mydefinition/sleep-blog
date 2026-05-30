@@ -36,3 +36,6 @@ backend/uploads/*
 
 # Archives
 *.zip
+
+# Frontend build output in backend
+backend/src/main/resources/static/
