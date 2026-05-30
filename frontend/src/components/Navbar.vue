@@ -33,7 +33,7 @@
     </div>
     <div class="nav-right">
       <button @click="openSettings" class="nav-link setting-btn" title="样式设置">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2"/><circle cx="17.5" cy="10.5" r="2"/><circle cx="8.5" cy="7.5" r="2"/><circle cx="6.5" cy="12.5" r="2"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
         样式
       </button>
       <template v-if="auth.isLoggedIn">
@@ -47,7 +47,7 @@
     </div>
   </nav>
 
-  <div v-if="showSettings" class="settings-backdrop" @click="showSettings = false"></div>
+  <div v-if="showSettings" class="settings-backdrop" @click="cancelSettings"></div>
   <div v-if="showSettings" class="settings-panel">
     <h3>样式设置</h3>
     <label>主题色</label>
@@ -256,6 +256,7 @@ onMounted(() => settings.apply())
 
 .btn-primary:hover {
   opacity: 0.9;
+  color: #fff;
 }
 
 .setting-btn {
@@ -303,6 +304,11 @@ onMounted(() => settings.apply())
 
 .tooltip-host:hover .tooltip {
   display: block;
+}
+
+/* 样式设置图标颜色 */
+.setting-btn {
+  color: v-bind('settings.primary');
 }
 
 /* 设置面板遮罩 */
