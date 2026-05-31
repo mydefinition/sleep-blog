@@ -158,6 +158,7 @@ cd frontend && npm install && npm run dev
 cd frontend && npm run build
 
 # 2. 复制前端产物到后端静态资源
+rm -rf ../backend/src/main/resources/static/*
 cp -r dist/* ../backend/src/main/resources/static/
 
 # 3. 打包后端（fat JAR，内含前端）
