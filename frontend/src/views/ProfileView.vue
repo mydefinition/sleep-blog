@@ -23,5 +23,5 @@ function formatDate(d: string) {
 .profile { max-width: 500px; margin: 3rem auto; padding: 2rem; }
 h2 { margin-bottom: 1.5rem; }
 .info p { margin: 0.8rem 0; font-size: 1.05rem; }
-.btn { display: inline-block; margin-top: 1rem; padding: 0.5rem 1.2rem; background: #42b883; color: #fff; border-radius: 6px; text-decoration: none; }
+.btn { display: inline-block; margin-top: 1rem; padding: 0.5rem 1.2rem; background: var(--primary); color: #fff; border-radius: 6px; text-decoration: none; }
 </style>

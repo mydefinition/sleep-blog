@@ -110,7 +110,29 @@ $$
 > 请求需带 Header `super-token`，密钥在 `application.yml` 中配置 `app.super-secret`，生产环境请务必修改。
 
 
+### 文件存储
+
+| 方法 | 路径 | 说明 | 权限 |
+|---|---|---|---|
+| GET | `/api/files` | 文件列表（JSON） | 公开 |
+| POST | `/api/files` | 上传文件（form: file + path） | ADMIN |
+| DELETE | `/api/files/{id}` | 删除文件（软删 DB + 真删磁盘） | ADMIN |
+| GET | `/api/files/{id}/download` | 下载文件 | 公开 |
+
 ## 📊 数据库设计
+
+### user
+### file_storage
+
+| 字段 | 类型 | 约束 | 说明 |
+|---|---|---|---|
+| id | BIGINT | PK 自增 | |
+| file_name | VARCHAR(255) | NOT NULL | 原始文件名 |
+| file_path | VARCHAR(500) | NOT NULL DEFAULT '/' | 目录路径 |
+| size | BIGINT | NOT NULL | 字节数 |
+| uploaded_by | BIGINT | FK → user.id | 上传者 |
+| is_deleted | TINYINT | NOT NULL DEFAULT 0 | 软删除标记 |
+| created_at | DATETIME | NOT NULL | |
 
 ### user
 

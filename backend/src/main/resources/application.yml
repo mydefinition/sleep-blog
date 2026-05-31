@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 8080
 
 spring:
@@ -35,6 +35,8 @@ app:
   jwt:
     secret: sample-blog-secret-key-must-be-at-least-256-bits-long
     expiration: 86400000
-  upload:
-    dir: ./uploads
+  image:
+    dir: ./uploads/images
+  filestorage:
+    dir: ./uploads/files
   super-secret: super-secret-change-me

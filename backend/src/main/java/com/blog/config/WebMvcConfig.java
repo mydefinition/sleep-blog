@@ -1,5 +1,6 @@
 package com.blog.config;
 
+import com.blog.common.PathUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -8,18 +9,24 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Value("${app.upload.dir}")
-    private String uploadDir;
+    @Value("${app.image.dir}")
+    private String imageDir;
+
+    @PostConstruct
+    void init() {
+        imageDir = PathUtil.absolute(imageDir);
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadDir + "/");
+                .addResourceLocations("file:" + imageDir + "/");
 
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")

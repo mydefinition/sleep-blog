@@ -37,3 +37,11 @@ export interface User {
   role: string
   createdAt: string
 }
+export interface FileStorage {
+  id: number
+  fileName: string
+  filePath: string
+  size: number
+  uploaderName: string
+  createdAt: string
+}

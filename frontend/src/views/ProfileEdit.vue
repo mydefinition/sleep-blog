@@ -45,8 +45,8 @@ h2 { text-align: center; margin-bottom: 1.5rem; }
 form { display: flex; flex-direction: column; gap: 0.8rem; }
 label { font-size: 0.9rem; color: #666; }
 input { padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
-button { padding: 0.6rem; background: #42b883; color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; }
-button:hover { background: #38a572; }
+button { padding: 0.6rem; background: var(--primary); color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; }
+button:hover { opacity: 0.85; }
 .error { color: #ff5252; font-size: 0.85rem; }
 .success { color: #2e7d32; font-size: 0.85rem; }
 </style>

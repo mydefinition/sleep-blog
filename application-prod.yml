@@ -17,6 +17,8 @@ mybatis-plus:
 app:
   jwt:
     secret: 请替换为至少32字符的随机密钥
-  upload:
-    dir: /data/uploads
+  image:
+    dir: /data/uploads/images
+  filestorage:
+    dir: /data/uploads/files
   super-secret: 请替换为强随机密钥

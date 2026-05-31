@@ -36,3 +36,15 @@ CREATE TABLE IF NOT EXISTS comment (
     is_deleted TINYINT       NOT NULL DEFAULT 0,
     created_at DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS file_storage (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name       TEXT    NOT NULL,
+    is_dir     INTEGER NOT NULL DEFAULT 0,
+    size       INTEGER NULL,
+    local_id   INTEGER NULL,
+    hash       TEXT    NULL,
+    user_id    INTEGER NULL,
+    upload_at  TEXT    NULL,
+    FOREIGN KEY (local_id) REFERENCES file_storage(id) ON DELETE CASCADE
+);
+INSERT OR IGNORE INTO file_storage (id, name, is_dir, local_id) VALUES (0, '', 1, NULL);

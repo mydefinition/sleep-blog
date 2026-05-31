@@ -1,10 +1,12 @@
 package com.blog.service.impl;
 
-import com.blog.service.FileService;
+import com.blog.common.PathUtil;
+import com.blog.service.ImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,13 +14,18 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class ImageServiceImpl implements ImageService {
 
-    @Value("${app.upload.dir}")
-    private String uploadDir;
+    @Value("${app.image.dir}")
+    private String imageDir;
+
+    @PostConstruct
+    void init() {
+        imageDir = PathUtil.absolute(imageDir);
+    }
 
     public String upload(MultipartFile file) throws IOException {
-        Path dir = Paths.get(uploadDir);
+        Path dir = Paths.get(imageDir);
         if (!Files.exists(dir)) {
             Files.createDirectories(dir);
         }
