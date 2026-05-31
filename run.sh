@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-APP_DIR="/opt/sample-blog"
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
 JAR_NAME="sample-blog-1.0.0.jar"
 JAVA_OPTS="-Xmx256m -Xms128m"
 
