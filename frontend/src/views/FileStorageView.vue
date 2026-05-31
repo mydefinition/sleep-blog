@@ -175,7 +175,7 @@ async function loadTree() {
     const map = new Map<number, FileTreeNode>()
     const pathMap = new Map<string, number>()
     // 根节点 id=0
-    map.set(0, { id: 0, name: ', isDir: true, path: ', children: tree })
+    map.set(0, { id: 0, name: '', isDir: true, path: '', children: tree })
     indexTree(tree, map, pathMap)
     nodeMap.value = map
     pathIdMap.value = pathMap

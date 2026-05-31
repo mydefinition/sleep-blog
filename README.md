@@ -1,8 +1,8 @@
-# 📝 sample-blog
+# sample-blog
 
 基于 Vue 3 + Spring Boot 3 的个人博客系统。
 
-## 🧱 技术栈
+## 技术栈
 
 | 层 | 技术 |
 |---|---|
@@ -10,21 +10,12 @@
 | 状态管理 | Pinia |
 | 路由 | Vue Router 4 |
 | Markdown | md-editor-v3 |
-| HTTP | 原生 fetch |
 | 后端 | Spring Boot 3 |
 | ORM | MyBatis-Plus |
 | 数据库 | SQLite |
 | 认证 | JWT + BCrypt |
 
-## 👥 用户角色
-
-| 角色 | 权限 |
-|---|---|
-| 管理员 (ADMIN) | 发/编/删文章，上传文件/图片，删评论 |
-| 登录用户 (USER) | 发评论，修改个人信息，下载文件 |
-| 未登录 | 浏览文章和文件 |
-
-## 📄 页面
+## 页面
 
 | 页面 | 路由 | 权限 |
 |---|---|---|
@@ -32,6 +23,7 @@
 | 文章列表 | `/articles` | 公开 |
 | 文章详情 | `/articles/:id` | 公开 |
 | 文件存储 | `/files` | 公开 |
+| 关于我 | `/about` | 公开 |
 | 登录 | `/login` | 公开 |
 | 注册 | `/register` | 公开 |
 | 个人信息 | `/profile` | 登录 |
@@ -39,7 +31,21 @@
 | 发布文章 | `/write` | ADMIN |
 | 编辑文章 | `/write/:id` | ADMIN |
 
-## 🔌 API
+## 用户角色
+
+| 角色 | 权限 |
+|---|---|
+| 管理员 (ADMIN) | 发/编/删文章，上传文件/图片，删评论 |
+| 登录用户 (USER) | 发评论，修改个人信息，下载文件 |
+| 未登录 | 浏览文章和文件 |
+
+## API
+
+### 首页
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/api/home/daily` | 获取今日任务 |
 
 ### 认证
 
@@ -84,7 +90,7 @@
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
-| POST | `/api/images/upload` | 上传（MultipartFile） |
+| POST | `/api/images/upload` | 上传，返回 `/storage/xxx.png` |
 
 ### 文件存储
 
@@ -106,85 +112,126 @@
 | PUT | `/api/super/users/revoke` | 撤销管理员 `{id}` |
 | PUT | `/api/super/users/reset-password` | 重置密码 `{id, password}` |
 
-> 需 Header `super-token`，密钥配置 `app.super-secret`
+> Header: `super-token`，密钥 `app.super-secret`
 
-## 📊 数据库
+## 配置
 
-### user
+开发环境配置文件位于 `backend/src/main/resources/application.yml`。
 
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | INTEGER PK | 自增 |
-| username | VARCHAR(50) UNIQUE | 用户名 |
-| password | CHAR(60) | BCrypt |
-| role | VARCHAR(10) | ADMIN / USER |
-| created_at | DATETIME | |
+```yaml
+app:
+  storage:
+    image-upload: ./storage/images     # 图片存储路径
+    filestorage-root: ./storage/files  # 文件存储路径
+  jwt:
+    secret: <至少32字符的随机密钥>
+    expiration: 86400000               # 24h
+  super-secret: <管理员密钥>
+```
 
-### article
+## 每日任务
 
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | INTEGER PK | 自增 |
-| title | VARCHAR(200) | |
-| content | TEXT | Markdown |
-| summary | VARCHAR(500) | |
-| author_id | FK → user.id | |
-| is_deleted | TINYINT | 软删除 |
-| created_at | DATETIME | |
-| updated_at | DATETIME | |
+任务词条存储在 `tasks.json`（JSON 数组），外置优先：
 
-### tag
+- JAR 同级目录存在 `tasks.json` → 直接读取
+- 不存在 → 首次启动从 JAR 内复制一份出来
+- 修改后下次请求生效，无需重启
 
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | INTEGER PK | 自增 |
-| name | VARCHAR(50) UNIQUE | |
+日界点为凌晨 4 点，同一天内返回相同结果。
 
-### article_tag
+## 构建与部署
 
-| 字段 | 类型 |
-|---|---|
-| article_id | FK → article.id |
-| tag_id | FK → tag.id |
-
-### comment
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | INTEGER PK | 自增 |
-| content | TEXT | |
-| article_id | FK → article.id | |
-| user_id | FK → user.id | |
-| is_deleted | TINYINT | 软删除 |
-| created_at | DATETIME | |
-
-### file_storage
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | INTEGER PK | 自增，0=根目录 |
-| name | TEXT | 文件/文件夹名 |
-| is_dir | INTEGER | 0=文件 1=目录 |
-| size | INTEGER | 文件大小（目录 NULL） |
-| local_id | FK → file_storage.id | 父目录 |
-| hash | TEXT | SHA-256（目录 NULL） |
-| user_id | FK → user.id | 上传者 |
-| upload_at | TEXT | |
-
-## 🖼️ 图片流程
-
-1. 编辑器选图 → `POST /api/images/upload`
-2. 后端存 `uploads/images/`，返回 URL
-3. 插入 `![](/uploads/images/xxx.png)`
-
-## 🚀 启动
+### 本地开发
 
 ```bash
-# 后端
+# 后端 (http://localhost:8080)
 cd backend && mvn spring-boot:run
 
-# 前端
+# 前端 (http://localhost:5173)
 cd frontend && npm install && npm run dev
 ```
 
-后端默认 `http://localhost:8080`，前端 `http://localhost:3000`。
+### 生产打包
+
+```bash
+# 1. 构建前端
+cd frontend && npm run build
+
+# 2. 复制前端产物到后端静态资源
+cp -r dist/* ../backend/src/main/resources/static/
+
+# 3. 打包后端（fat JAR，内含前端）
+cd ../backend && mvn clean package -DskipTests
+
+# 4. 收集部署文件
+mkdir -p ../release
+cp ../backend/target/sample-blog-1.0.0.jar ../release/
+cp ../application-prod.yml ../release/
+cp ../run.sh ../release/
+```
+
+产物目录 `release/`：
+
+```
+release/
+├── sample-blog-1.0.0.jar
+├── application-prod.yml
+└── run.sh
+```
+
+### 部署到服务器
+
+将 `release/` 目录上传到服务器（如 `/opt/sample-blog/`）：
+
+```
+/opt/sample-blog/
+├── sample-blog-1.0.0.jar
+├── application-prod.yml
+└── run.sh
+```
+
+编辑 `application-prod.yml`，修改密钥和路径：
+
+```yaml
+server:
+  port: 80
+
+app:
+  storage:
+    image-upload: /data/storage/images
+    filestorage-root: /data/storage/files
+  jwt:
+    secret: <真随机密钥，openssl rand -base64 32>
+  super-secret: <真随机密钥>
+```
+
+启动：
+
+```bash
+chmod +x run.sh
+./run.sh start     # 启动
+./run.sh stop      # 停止
+./run.sh restart   # 重启
+./run.sh status    # 查看状态
+```
+
+### 首次登录
+
+| 用户名 | 密码 |
+|---|---|
+| admin | admin123 |
+
+登录后请立即修改密码。
+
+## 数据库
+
+SQLite 单文件 `blog.db`，自动建表，数据存储在 JAR 同级目录。
+
+| 表 | 说明 |
+|---|---|
+| user | 用户 |
+| article | 文章 |
+| tag | 标签 |
+| article_tag | 文章-标签关联 |
+| comment | 评论 |
+| file_storage | 文件/目录树 |

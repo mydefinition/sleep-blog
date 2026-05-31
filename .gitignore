@@ -39,3 +39,7 @@ backend/uploads/*
 
 # Frontend build output in backend
 backend/src/main/resources/static/
+
+# Release
+release/
+

@@ -49,7 +49,7 @@ const route = useRoute()
 const settings = useSettingsStore()
 const router = useRouter()
 const isEdit = computed(() => !!route.params.id)
-const toolbars = ['bold','italic','strikethrough','|','code','codeRow','|','h1','h2','h3','|','link','image','|','table','katex','|','preview','htmlPreview']
+const toolbars: any[] = ['bold','italic','strikethrough','|','code','codeRow','|','h1','h2','h3','|','link','image','|','table','katex','|','preview','htmlPreview']
 
 const tags = ref<Tag[]>([])
 const picked = ref<number[]>([])
