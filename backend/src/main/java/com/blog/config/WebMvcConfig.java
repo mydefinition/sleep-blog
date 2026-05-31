@@ -15,7 +15,7 @@ import java.io.IOException;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Value("${app.image.dir}")
+    @Value("${app.storage.image-upload}")
     private String imageDir;
 
     @PostConstruct
@@ -25,7 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
+        registry.addResourceHandler("/storage/**")
                 .addResourceLocations("file:" + imageDir + "/");
 
         registry.addResourceHandler("/**")

@@ -1,14 +1,14 @@
 <template>
   <div class="home">
     <div class="hero">
-      <h1 class="goal-text">今日目标 : 早点睡觉</h1>
+      <h1 class="goal-text">今日目标 : {{ dailyTask }}</h1>
       <button class="random-btn" @click="goRandom">{{ loading ? '加载中...' : '随便看看' }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '@/api'
 import { useSettingsStore } from '@/stores/settings'
@@ -18,6 +18,16 @@ const router = useRouter()
 const settings = useSettingsStore()
 const articles = ref<Article[]>([])
 const loading = ref(false)
+const dailyTask = ref('...')
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/api/home/daily')
+    dailyTask.value = res.data.task
+  } catch {
+    dailyTask.value = '...'
+  }
+})
 
 async function goRandom() {
   if (articles.value.length === 0) {

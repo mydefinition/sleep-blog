@@ -32,7 +32,7 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    @Value("${app.filestorage.dir}")
+    @Value("${app.storage.filestorage-root}")
     private String baseDir;
 
     private final FileStorageMapper mapper;

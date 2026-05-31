@@ -13,6 +13,7 @@ const router = createRouter({
     { path: '/profile/edit', name: 'profile-edit', component: () => import('@/views/ProfileEdit.vue') },
     { path: '/write', name: 'write', component: () => import('@/views/WriteView.vue') },
     { path: '/write/:id', name: 'write-edit', component: () => import('@/views/WriteView.vue') },
+    { path: '/about', name: 'about', component: () => import('@/views/AboutView.vue') },
     { path: '/files', name: 'files', component: () => import('@/views/FileStorageView.vue') },
   ]
 })

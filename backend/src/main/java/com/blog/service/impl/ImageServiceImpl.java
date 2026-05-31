@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    @Value("${app.image.dir}")
+    @Value("${app.storage.image-upload}")
     private String imageDir;
 
     @PostConstruct
@@ -38,6 +38,6 @@ public class ImageServiceImpl implements ImageService {
         Path target = dir.resolve(filename);
         file.transferTo(target.toFile());
 
-        return "/uploads/" + filename;
+        return "/storage/" + filename;
     }
 }
