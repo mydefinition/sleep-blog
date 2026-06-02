@@ -13,10 +13,23 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /** 业务异常处理 */
+    @ExceptionHandler(BusinessException.class)
+    public Result<?> handleBusiness(BusinessException e) {
+        return Result.error(e.getCode(), e.getMessage());
+    }
+    /** 权限不足 */
     @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     public Result<?> handleAccessDenied(AccessDeniedException e) {
-        log.warn("权限不足: {}", e.getMessage());
-        return Result.error(403, e.getMessage());
+        return Result.error(ResultCode.FORBIDDEN, e.getMessage());
+    }
+
+
+
+    /** 其他未捕获异常处理 */
+    @ExceptionHandler(Exception.class)
+    public Result<?> handleException(Exception e) {
+        log.error("系统异常", e);
+        return Result.error(e.getMessage());
     }
 }

@@ -2,6 +2,8 @@ package com.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.blog.common.PathUtil;
+import com.blog.common.BusinessException;
+import com.blog.common.ResultCode;
 import com.blog.entity.FileStorage;
 import com.blog.entity.User;
 import com.blog.mapper.FileStorageMapper;
@@ -246,13 +248,13 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (id == null || id == 0) throw new RuntimeException("不能删除根目录");
+        if (id == null || id == 0) throw new BusinessException(ResultCode.BAD_REQUEST, "不能删除根目录");
 
         FileTreeNode node;
         rLock.lock();
         try { node = cache.get(id); } finally { rLock.unlock(); }
 
-        if (node == null) throw new RuntimeException("节点不存在");
+        if (node == null) throw new BusinessException(ResultCode.NOT_FOUND, "节点不存在");
 
         // 先收集要删的所有节点 ID
         List<Long> ids = new ArrayList<>();
@@ -312,7 +314,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         rLock.lock();
         try {
             FileTreeNode node = cache.get(id);
-            if (node == null || node.isDir) throw new RuntimeException("文件不存在");
+            if (node == null || node.isDir) throw new BusinessException(ResultCode.NOT_FOUND, "文件不存在");
             String rel = node.path != null ? node.path : "";
             if (rel.startsWith("/")) rel = rel.substring(1);
             return Paths.get(baseDir, rel).toString();
@@ -329,7 +331,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         try {
             FileTreeNode node = cache.get(localId);
             if (node == null || !node.isDir)
-                throw new RuntimeException("目标目录不存在");
+                throw new BusinessException(ResultCode.NOT_FOUND, "目标目录不存在");
             return node;
         } finally {
             rLock.unlock();

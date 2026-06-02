@@ -6,7 +6,7 @@ import com.blog.dto.request.RegisterRequest;
 
 public interface UserService {
     void register(RegisterRequest req);
-    String login(LoginRequest req);
+    void login(LoginRequest req);
     UserDto getProfile(Long userId);
     void updateProfile(Long userId, RegisterRequest req);
 }

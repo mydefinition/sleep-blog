@@ -2,6 +2,8 @@ package com.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.blog.dto.CommentDto;
+import com.blog.common.BusinessException;
+import com.blog.common.ResultCode;
 import com.blog.entity.Article;
 import com.blog.entity.Comment;
 import com.blog.entity.User;
@@ -39,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
     public void create(Long userId, Long articleId, String content) {
         Article article = articleMapper.selectById(articleId);
         if (article == null) {
-            throw new RuntimeException("文章不存在");
+            throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
         }
         Comment comment = new Comment();
         comment.setUserId(userId);
@@ -52,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
     public void delete(Long id) {
         Comment comment = commentMapper.selectById(id);
         if (comment == null) {
-            throw new RuntimeException("评论不存在");
+            throw new BusinessException(ResultCode.NOT_FOUND, "评论不存在");
         }
         comment.setIsDeleted(1);
         commentMapper.updateById(comment);

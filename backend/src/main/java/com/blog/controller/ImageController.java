@@ -1,6 +1,7 @@
 package com.blog.controller;
 
 import com.blog.common.Result;
+import com.blog.context.UserContext;
 import com.blog.service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +25,7 @@ public class ImageController {
     @PostMapping("/upload")
     @Operation(summary = "上传图片")
     public Result<?> upload(@RequestParam MultipartFile file) throws IOException {
+        UserContext.requireAdmin();
         String url = imageService.upload(file);
         return Result.ok(Map.of("url", url));
     }

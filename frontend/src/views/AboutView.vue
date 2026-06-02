@@ -10,7 +10,7 @@
             存活状态：尚存，最近在学CSAPP ing……
           </p>
           <p class="bio">
-            亚洲区域赛金，全国邀请赛银，电子科技大学算法与逻辑实验室在读。AI时代我相信人定胜天。
+            亚洲区域赛银，全国邀请赛金，电子科技大学算法与逻辑实验室在读。AI时代我相信人定胜天。
           </p>
           <div class="links">
             <a href="https://github.com/mydefinition" target="_blank" class="link">
@@ -58,6 +58,18 @@
             <li class="todo-item undone">
               <span class="todo-check"></span>
               移动端适配（响应式布局）
+            </li>
+            <li class="todo-item undone">
+              <span class="todo-check"></span>
+              优化登录UI
+            </li>
+            <li class="todo-item undone">
+              <span class="todo-check"></span>
+              修复写文章中添加标签的bug
+            </li>
+            <li class="todo-item undone">
+              <span class="todo-check"></span>
+              搞证书配HTTPS
             </li>
             <li class="todo-item undone">
               <span class="todo-check"></span>

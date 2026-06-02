@@ -1,6 +1,7 @@
 package com.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.blog.converter.TagConverter;
 import com.blog.dto.TagDto;
 import com.blog.entity.ArticleTag;
 import com.blog.entity.Tag;
@@ -42,19 +43,16 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     public TagDto create(String name) {
-        Tag existing = tagMapper.selectOne(
+        Tag tag = tagMapper.selectOne(
                 new LambdaQueryWrapper<Tag>().eq(Tag::getName, name));
-        if (existing != null) return toDto(existing);
-        Tag tag = new Tag();
+        if (tag != null) return toDto(tag);
+        tag = new Tag();
         tag.setName(name);
         tagMapper.insert(tag);
         return toDto(tag);
     }
 
     private TagDto toDto(Tag tag) {
-        TagDto dto = new TagDto();
-        dto.setId(tag.getId());
-        dto.setName(tag.getName());
-        return dto;
+        return TagConverter.toDto(tag);
     }
 }

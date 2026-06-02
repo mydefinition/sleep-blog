@@ -1,10 +1,10 @@
 package com.blog.controller;
 
 import com.blog.common.Result;
+import com.blog.context.UserContext;
 import com.blog.dto.ArticleDto;
 import com.blog.dto.ArticleListDto;
 import com.blog.dto.request.ArticleRequest;
-import com.blog.security.SecurityUtils;
 import com.blog.service.ArticleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,15 +41,15 @@ public class ArticleController {
     @PostMapping
     @Operation(summary = "发布文章")
     public Result<?> create(@RequestBody ArticleRequest req) {
-        SecurityUtils.requireAdmin();
-        articleService.create(SecurityUtils.getCurrentUserId(), req);
+        UserContext.requireAdmin();
+        articleService.create(UserContext.getCurrentUser().getId(), req);
         return Result.ok();
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "编辑文章")
     public Result<?> update(@PathVariable Long id, @RequestBody ArticleRequest req) {
-        SecurityUtils.requireAdmin();
+        UserContext.requireAdmin();
         articleService.update(id, req);
         return Result.ok();
     }
@@ -57,7 +57,7 @@ public class ArticleController {
     @DeleteMapping("/{id}")
     @Operation(summary = "删除文章")
     public Result<?> deleteArticle(@PathVariable Long id) {
-        SecurityUtils.requireAdmin();
+        UserContext.requireAdmin();
         articleService.delete(id);
         return Result.ok();
     }

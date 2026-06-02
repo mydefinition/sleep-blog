@@ -32,9 +32,6 @@ mybatis-plus:
       id-type: auto
 
 app:
-  jwt:
-    secret: sample-blog-secret-key-must-be-at-least-256-bits-long
-    expiration: 86400000
   storage:
     image-upload: ./storage/images
     filestorage-root: ./storage/files

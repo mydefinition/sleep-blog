@@ -1,10 +1,14 @@
 package com.blog.controller;
 
+import com.blog.common.BusinessException;
 import com.blog.common.Result;
+import com.blog.common.ResultCode;
+import com.blog.context.UserContext;
 import com.blog.dto.UserDto;
+import com.blog.dto.request.LoginRequest;
 import com.blog.dto.request.RegisterRequest;
-import com.blog.security.SecurityUtils;
 import com.blog.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -20,18 +24,43 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping("/register")
+    @Operation(summary = "用户注册")
+    public Result<?> register(@RequestBody RegisterRequest req) {
+        userService.register(req);
+        return Result.ok();
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "用户登录")
+    public Result<?> login(@RequestBody LoginRequest req) {
+        userService.login(req);
+        return Result.ok();
+    }
+
     @GetMapping("/profile")
     @Operation(summary = "获取个人信息")
     public Result<UserDto> profile() {
-        Long userId = SecurityUtils.getCurrentUserId();
-        return Result.ok(userService.getProfile(userId));
+        UserDto user = UserContext.getCurrentUser();
+        if (user == null)
+            throw new BusinessException(ResultCode.UNAUTHORIZED);
+        return Result.ok(userService.getProfile(user.getId()));
     }
 
     @PutMapping("/profile")
     @Operation(summary = "修改个人信息")
     public Result<?> updateProfile(@RequestBody RegisterRequest req) {
-        Long userId = SecurityUtils.getCurrentUserId();
+        Long userId = UserContext.getCurrentUser().getId();
+        if (userId == null)
+            throw new BusinessException(ResultCode.UNAUTHORIZED);
         userService.updateProfile(userId, req);
+        return Result.ok();
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "退出登录")
+    public Result<?> logout(HttpSession session) {
+        session.invalidate();
         return Result.ok();
     }
 }

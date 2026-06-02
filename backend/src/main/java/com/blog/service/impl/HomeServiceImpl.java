@@ -1,5 +1,6 @@
 package com.blog.service.impl;
 
+import com.blog.dto.HomeDto;
 import com.blog.service.HomeService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.ClassPathResource;
@@ -44,7 +45,13 @@ public class HomeServiceImpl implements HomeService {
     }
 
     @Override
-    public String getDailyTask() {
+    public HomeDto getDailyTask() {
+        HomeDto dto = new HomeDto();
+        dto.setTask(todayTask());
+        return dto;
+    }
+
+    private synchronized String todayTask() {
         LocalDate today = getDate();
         if (cacheTaskDate == null || !cacheTaskDate.equals(today)) {
             cacheTaskDate = today;

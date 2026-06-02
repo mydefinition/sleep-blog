@@ -1,12 +1,17 @@
 package com.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.blog.common.BusinessException;
 import com.blog.common.Result;
+import com.blog.common.ResultCode;
+import com.blog.context.UserContext;
+import com.blog.converter.UserConverter;
 import com.blog.dto.request.IdRequest;
 import com.blog.dto.request.ResetPasswordRequest;
 import com.blog.entity.User;
 import com.blog.entity.User.Role;
 import com.blog.mapper.UserMapper;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +24,7 @@ import java.util.List;
 @RequestMapping("/api/super")
 @Tag(name = "权限管理（需密钥）")
 public class SuperController {
-
+    
     @Value("${app.super-secret}")
     private String superSecret;
 
@@ -33,7 +38,7 @@ public class SuperController {
 
     private void checkSecret(String secret) {
         if (secret == null || !secret.equals(superSecret)) {
-            throw new RuntimeException("密钥错误");
+            throw new BusinessException(ResultCode.BAD_REQUEST, "密钥错误");
         }
     }
 
@@ -57,7 +62,7 @@ public class SuperController {
                 new LambdaQueryWrapper<User>()
                         .select(User::getId, User::getUsername, User::getRole, User::getCreatedAt)
                         .eq(User::getUsername, username));
-        if (user == null) throw new RuntimeException("用户不存在: " + username);
+        if (user == null) throw new BusinessException(ResultCode.NOT_FOUND, "用户不存在");
         return Result.ok(user);
     }
 
@@ -67,9 +72,10 @@ public class SuperController {
                              @RequestBody IdRequest body) {
         checkSecret(secret);
         User user = userMapper.selectById(body.getId());
-        if (user == null) throw new RuntimeException("用户不存在");
+        if (user == null) throw new BusinessException(ResultCode.NOT_FOUND, "用户不存在");
         user.setRole(Role.ADMIN);
         userMapper.updateById(user);
+        UserContext.setCurrentUser(UserConverter.toDto(user));
         return Result.ok();
     }
 
@@ -79,9 +85,10 @@ public class SuperController {
                             @RequestBody IdRequest body) {
         checkSecret(secret);
         User user = userMapper.selectById(body.getId());
-        if (user == null) throw new RuntimeException("用户不存在");
+        if (user == null) throw new BusinessException(ResultCode.NOT_FOUND, "用户不存在");
         user.setRole(Role.USER);
         userMapper.updateById(user);
+        UserContext.setCurrentUser(UserConverter.toDto(user));
         return Result.ok();
     }
 
@@ -91,9 +98,9 @@ public class SuperController {
                                    @RequestBody ResetPasswordRequest body) {
         checkSecret(secret);
         User user = userMapper.selectById(body.getId());
-        if (user == null) throw new RuntimeException("用户不存在");
+        if (user == null) throw new BusinessException(ResultCode.NOT_FOUND, "用户不存在");
         if (body.getPassword() == null || body.getPassword().isBlank()) {
-            throw new RuntimeException("密码不能为空");
+            throw new BusinessException(ResultCode.BAD_REQUEST, "密码不能为空");
         }
         user.setPassword(passwordEncoder.encode(body.getPassword()));
         userMapper.updateById(user);

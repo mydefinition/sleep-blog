@@ -1,8 +1,8 @@
 package com.blog.controller;
 
 import com.blog.common.Result;
+import com.blog.context.UserContext;
 import com.blog.model.FileTreeNode;
-import com.blog.security.SecurityUtils;
 import com.blog.dto.request.MkdirRequest;
 import com.blog.service.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,21 +43,21 @@ public class FileStorageController {
     @Operation(summary = "上传文件")
     public Result<FileTreeNode> upload(@RequestParam MultipartFile file,
                                        @RequestParam(required = false) Long localId) throws IOException {
-        SecurityUtils.requireAdmin();
-        return Result.ok(fileStorageService.upload(SecurityUtils.getCurrentUserId(), file, localId));
+        UserContext.requireAdmin();
+        return Result.ok(fileStorageService.upload(UserContext.getCurrentUser().getId(), file, localId));
     }
 
     @PostMapping("/mkdir")
     @Operation(summary = "新建文件夹")
     public Result<FileTreeNode> mkdir(@RequestBody MkdirRequest req) {
-        SecurityUtils.requireAdmin();
+        UserContext.requireAdmin();
         return Result.ok(fileStorageService.mkdir(req.getName(), req.getLocalId()));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除文件或文件夹")
     public Result<?> delete(@PathVariable Long id) {
-        SecurityUtils.requireAdmin();
+        UserContext.requireAdmin();
         fileStorageService.delete(id);
         return Result.ok();
     }

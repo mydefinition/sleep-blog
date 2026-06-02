@@ -3,6 +3,8 @@ package com.blog.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.blog.common.BusinessException;
+import com.blog.common.ResultCode;
 import com.blog.dto.ArticleDto;
 import com.blog.dto.ArticleListDto;
 import com.blog.dto.request.ArticleRequest;
@@ -60,7 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleDto getById(Long id) {
         Article article = articleMapper.selectById(id);
         if (article == null) {
-            throw new RuntimeException("文章不存在");
+            throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
         }
         return toDto(article);
     }
@@ -81,7 +83,7 @@ public class ArticleServiceImpl implements ArticleService {
     public void update(Long id, ArticleRequest req) {
         Article article = articleMapper.selectById(id);
         if (article == null) {
-            throw new RuntimeException("文章不存在");
+            throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
         }
         article.setTitle(req.getTitle());
         article.setContent(req.getContent());

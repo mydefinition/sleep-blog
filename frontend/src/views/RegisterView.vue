@@ -1,11 +1,11 @@
-<template>
+﻿<template>
   <div class="form-page">
     <h2>注册</h2>
     <form @submit.prevent="handleRegister">
       <input v-model="username" type="text" placeholder="用户名" required />
       <input v-model="password" type="password" placeholder="密码" required />
       <p v-if="error" class="error">{{ error }}</p>
-      <p v-if="success" class="success">注册成功！<router-link to="/login">去登录</router-link></p>
+      <p v-if="success" class="success">注册成功，跳转中...</p>
       <button type="submit">注册</button>
     </form>
     <p class="switch">已有账号？<router-link to="/login">登录</router-link></p>
@@ -14,8 +14,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { api } from '@/api'
 
+const router = useRouter()
+const auth = useAuthStore()
 const username = ref('')
 const password = ref('')
 const error = ref('')
@@ -24,8 +28,10 @@ const success = ref(false)
 async function handleRegister() {
   error.value = ''
   try {
-    await api.post('/api/auth/register', { username: username.value, password: password.value })
+    await api.post('/api/user/register', { username: username.value, password: password.value })
     success.value = true
+    await auth.fetchProfile()
+    setTimeout(() => router.push('/'), 1000)
   } catch (e: any) {
     error.value = e.message
   }

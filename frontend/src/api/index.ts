@@ -1,11 +1,9 @@
-const BASE = ''
+﻿const BASE = ''
 
 async function request(url: string, options: RequestInit = {}) {
-  const token = localStorage.getItem('token')
   const headers: any = { 'Content-Type': 'application/json', ...options.headers }
-  if (token) headers['Authorization'] = 'Bearer ' + token
 
-  const res = await fetch(BASE + url, { ...options, headers })
+  const res = await fetch(BASE + url, { ...options, headers, credentials: 'same-origin' })
   const json = await res.json()
   if (json.code !== 200) throw new Error(json.message || '\u8BF7\u6C42\u5931\u8D25')
   return json

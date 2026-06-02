@@ -1,4 +1,4 @@
-# sample-blog
+﻿# sample-blog
 
 基于 Vue 3 + Spring Boot 3 的个人博客系统。
 
@@ -236,3 +236,19 @@ SQLite 单文件 `blog.db`，自动建表，数据存储在 JAR 同级目录。
 | article_tag | 文章-标签关联 |
 | comment | 评论 |
 | file_storage | 文件/目录树 |
+
+## Knife4j 接口文档
+
+生产环境默认关闭。如需启用，编辑 `application-prod.yml`：
+
+```yaml
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+knife4j:
+  enable: true
+```
+
+重启后访问 `http://服务器/doc.html`。

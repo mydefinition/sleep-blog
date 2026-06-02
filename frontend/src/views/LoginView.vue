@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="form-page">
     <h2>登录</h2>
     <form @submit.prevent="handleLogin">
@@ -26,8 +26,7 @@ const error = ref('')
 async function handleLogin() {
   error.value = ''
   try {
-    const res = await api.post('/api/auth/login', { username: username.value, password: password.value })
-    auth.setToken(res.data.token)
+    await api.post('/api/user/login', { username: username.value, password: password.value })
     await auth.fetchProfile()
     router.push('/')
   } catch (e: any) {

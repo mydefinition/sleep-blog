@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+﻿import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -18,10 +18,14 @@ const router = createRouter({
   ]
 })
 
+let initialized = false
+
 router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore()
 
-  if (auth.token && !auth.user) {
+  // 首次导航时尝试获取用户信息（session cookie 自动携带）
+  if (!initialized) {
+    initialized = true
     await auth.fetchProfile()
   }
 

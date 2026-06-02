@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="write-page">
     <header class="write-header">
       <input v-model="title" type="text" class="title-input" :class="{ shaking: shake }" placeholder="请输入标题" />
@@ -85,7 +85,7 @@ async function uploadImg(files: File[], callback: (urls: string[]) => void) {
       fd.append('file', file)
       const res = await fetch('/api/images/upload', {
         method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+        headers: {},
         body: fd
       })
       const json = await res.json()

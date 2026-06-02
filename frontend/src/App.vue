@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Navbar />
   <main class="container">
     <router-view />
@@ -7,13 +7,11 @@
 
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue'
-import { useAuthStore } from '@/stores/auth'
+import { useSettingsStore } from '@/stores/settings'
 import { onMounted } from 'vue'
 
-const auth = useAuthStore()
+const settings = useSettingsStore()
 onMounted(() => {
-  if (auth.token) {
-    auth.fetchProfile()
-  }
+  settings.apply()
 })
 </script>

@@ -1,6 +1,7 @@
 package com.blog.controller;
 
 import com.blog.common.Result;
+import com.blog.dto.HomeDto;
 import com.blog.service.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +24,7 @@ public class HomeController {
 
     @GetMapping("/daily")
     @Operation(summary = "获取今日任务")
-    public Result<Map<String, String>> daily() {
-        return Result.ok(Map.of("task", taskService.getDailyTask()));
+    public Result<HomeDto> daily() {
+        return Result.ok(taskService.getDailyTask());
     }
 }

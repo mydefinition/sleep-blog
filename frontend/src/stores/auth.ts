@@ -1,34 +1,34 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { api } from '@/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref(localStorage.getItem('token') || '')
   const user = ref<any>(null)
+  const loading = ref(false)
 
-  const isLoggedIn = computed(() => !!token.value)
+  const isLoggedIn = computed(() => user.value != null)
   const isAdmin = computed(() => user.value?.role === 'ADMIN')
 
-  function setToken(t: string) {
-    token.value = t
-    localStorage.setItem('token', t)
-  }
-
-  function logout() {
-    token.value = ''
-    user.value = null
-    localStorage.removeItem('token')
-  }
-
   async function fetchProfile() {
-    if (!token.value) return
+    loading.value = true
     try {
       const res = await api.get('/api/user/profile')
       user.value = res.data
     } catch {
-      // 静默失败：API 不可用时不清除 token
+      user.value = null
+    } finally {
+      loading.value = false
     }
   }
 
-  return { token, user, isLoggedIn, isAdmin, setToken, logout, fetchProfile }
+  async function logout() {
+    try {
+      await api.post('/api/user/logout')
+    } catch {
+      // ignore
+    }
+    user.value = null
+  }
+
+  return { user, loading, isLoggedIn, isAdmin, fetchProfile, logout }
 })

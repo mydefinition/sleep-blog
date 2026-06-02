@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="files-page">
     <div class="files-main">
       <div class="files-header">
@@ -209,10 +209,8 @@ async function doUpload() {
     const fd = new FormData()
     fd.append('file', pendingFile)
     fd.append('localId', String(currentDirId.value))
-    const token = localStorage.getItem('token')
     await fetch('/api/files/upload', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token },
       body: fd
     })
     if (fileInput.value) fileInput.value.value = ''
@@ -229,15 +227,7 @@ async function doUpload() {
 async function doMkdir() {
   if (!mkdirName.value.trim()) return
   try {
-    const token = localStorage.getItem('token')
-    await fetch('/api/files/mkdir', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: mkdirName.value.trim(), localId: currentDirId.value })
-    })
+    await api.post('/api/files/mkdir', { name: mkdirName.value.trim(), localId: currentDirId.value })
     mkdirName.value = ''
     showMkdir.value = false
     await loadTree()
@@ -252,11 +242,7 @@ async function deleteNode(id: number) {
   const msg = node?.isDir ? '确定删除文件夹 "' + node.name + '" 及其所有内容？' : '确定删除文件 "' + (node?.name ?? '') + '"？'
   if (!confirm(msg)) return
   try {
-    const token = localStorage.getItem('token')
-    await fetch('/api/files/' + id, {
-      method: 'DELETE',
-      headers: { 'Authorization': 'Bearer ' + token }
-    })
+    await api.delete('/api/files/' + id)
     await loadTree()
   } catch (e: any) {
     alert(e.message || '删除失败')

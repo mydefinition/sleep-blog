@@ -1,6 +1,7 @@
 package com.blog.controller;
 
 import com.blog.common.Result;
+import com.blog.context.UserContext;
 import com.blog.dto.TagDto;
 import com.blog.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,7 @@ public class TagController {
     @PostMapping
     @Operation(summary = "创建标签")
     public Result<TagDto> create(@RequestBody Map<String, Object> body) {
+        UserContext.requireAdmin();
         String name = (String) body.get("name");
         return Result.ok(tagService.create(name));
     }

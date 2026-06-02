@@ -1,8 +1,8 @@
 package com.blog.controller;
 
 import com.blog.common.Result;
+import com.blog.context.UserContext;
 import com.blog.dto.CommentDto;
-import com.blog.security.SecurityUtils;
 import com.blog.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +30,7 @@ public class CommentController {
     @PostMapping("/api/articles/{articleId}/comments")
     @Operation(summary = "发表评论")
     public Result<?> create(@PathVariable Long articleId, @RequestBody Map<String, String> body) {
-        Long userId = SecurityUtils.getCurrentUserId();
+        Long userId = UserContext.getCurrentUser().getId();
         commentService.create(userId, articleId, body.get("content"));
         return Result.ok();
     }
@@ -38,7 +38,7 @@ public class CommentController {
     @DeleteMapping("/api/comments/{id}")
     @Operation(summary = "删除评论")
     public Result<?> deleteComment(@PathVariable Long id) {
-        SecurityUtils.requireAdmin();
+        UserContext.requireAdmin();
         commentService.delete(id);
         return Result.ok();
     }
