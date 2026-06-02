@@ -1,4 +1,4 @@
-﻿# sample-blog
+﻿# sleep blog
 
 基于 Vue 3 + Spring Boot 3 的个人博客系统。
 
