@@ -11,5 +11,20 @@ dist/
 
 # IDE
 .idea/
+.vscode/
 *.swp
 *.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java
+backend/target/
+*.db
+*.log
+logs/
+
+# Uploads
+storage/
+uploads/
