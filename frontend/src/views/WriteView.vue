@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="write-page">
     <header class="write-header">
       <input v-model="title" type="text" class="title-input" :class="{ shaking: shake }" placeholder="请输入标题" />

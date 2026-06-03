@@ -1,18 +1,18 @@
 <template>
-  <div class="about">
-    <div class="about-layout">
-      <div class="spacer"></div>
-      <div class="about-main">
-        <div class="about-card">
-          <img src="/avatar.png" alt="avatar" class="avatar" />
-          <h2 class="name">I love JT</h2>
-          <p class="bio">
+  <div class="min-h-[calc(100vh-52px)] p-8 box-border flex items-center justify-center">
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-8 max-w-[960px] w-full">
+      <div></div>
+      <div class="flex justify-center">
+        <div class="flex flex-col items-center gap-4 max-w-[380px] text-center">
+          <img src="/avatar.png" alt="avatar" class="w-[120px] h-[120px] rounded-full object-cover border-[3px] border-gray-100" />
+          <h2 class="text-2xl font-semibold text-gray-800 m-0 font-sans">I love JT</h2>
+          <p class="text-[0.95rem] text-gray-600 leading-relaxed m-0 font-sans">
             存活状态：尚存，最近在学CSAPP ing……
           </p>
-          <p class="bio">
+          <p class="text-[0.95rem] text-gray-600 leading-relaxed m-0 font-sans">
             亚洲区域赛银，全国邀请赛金，电子科技大学算法与逻辑实验室在读。AI时代我相信人定胜天。
           </p>
-          <div class="links">
+          <div class="flex gap-4 items-center mt-2">
             <a href="https://github.com/mydefinition" target="_blank" class="link">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
               GitHub
@@ -35,44 +35,44 @@
         </div>
       </div>
 
-      <div class="about-sidebar">
-        <div class="thanks-card">
-          <h3 class="section-title">特别鸣谢</h3>
-          <div class="thanks-items">
-            <span class="thanks-tag">codex</span>
-            <span class="thanks-tag">deepseek</span>
+      <div class="w-[260px] flex flex-col gap-6">
+        <div class="card-gradient-border p-5">
+          <h3 class="text-[0.9rem] font-semibold text-gray-800 m-0 mb-4 font-sans">特别鸣谢</h3>
+          <div class="flex gap-2 flex-wrap">
+            <span class="inline-block bg-gray-100 text-gray-600 px-2.5 py-1 rounded text-xs font-sans">codex</span>
+            <span class="inline-block bg-gray-100 text-gray-600 px-2.5 py-1 rounded text-xs font-sans">deepseek</span>
           </div>
         </div>
 
-        <div class="todo-card">
-          <h3 class="section-title">待办事项</h3>
-          <ul class="todo-list">
-            <li class="todo-item undone">
-              <span class="todo-check"></span>
+        <div class="card-gradient-border p-5">
+          <h3 class="text-[0.9rem] font-semibold text-gray-800 m-0 mb-4 font-sans">待办事项</h3>
+          <ul class="list-none p-0 m-0 flex flex-col gap-2.5">
+            <li class="flex items-center gap-2 text-[0.85rem] text-gray-400 font-sans">
+              <span class="w-3.5 h-3.5 border-[1.5px] border-gray-300 rounded-[3px] shrink-0"></span>
               新闻agent
             </li>
-            <li class="todo-item undone">
-              <span class="todo-check"></span>
+            <li class="flex items-center gap-2 text-[0.85rem] text-gray-400 font-sans">
+              <span class="w-3.5 h-3.5 border-[1.5px] border-gray-300 rounded-[3px] shrink-0"></span>
               读新闻功能前后端开发
             </li>
-            <li class="todo-item undone">
-              <span class="todo-check"></span>
+            <li class="flex items-center gap-2 text-[0.85rem] text-gray-400 font-sans">
+              <span class="w-3.5 h-3.5 border-[1.5px] border-gray-300 rounded-[3px] shrink-0"></span>
               移动端适配（响应式布局）
             </li>
-            <li class="todo-item undone">
-              <span class="todo-check"></span>
+            <li class="flex items-center gap-2 text-[0.85rem] text-gray-400 font-sans">
+              <span class="w-3.5 h-3.5 border-[1.5px] border-gray-300 rounded-[3px] shrink-0"></span>
               优化登录UI
             </li>
-            <li class="todo-item undone">
-              <span class="todo-check"></span>
+            <li class="flex items-center gap-2 text-[0.85rem] text-gray-400 font-sans">
+              <span class="w-3.5 h-3.5 border-[1.5px] border-gray-300 rounded-[3px] shrink-0"></span>
               修复写文章中添加标签的bug
             </li>
-            <li class="todo-item undone">
-              <span class="todo-check"></span>
+            <li class="flex items-center gap-2 text-[0.85rem] text-gray-400 font-sans">
+              <span class="w-3.5 h-3.5 border-[1.5px] border-gray-300 rounded-[3px] shrink-0"></span>
               搞证书配HTTPS
             </li>
-            <li class="todo-item undone">
-              <span class="todo-check"></span>
+            <li class="flex items-center gap-2 text-[0.85rem] text-gray-400 font-sans">
+              <span class="w-3.5 h-3.5 border-[1.5px] border-gray-300 rounded-[3px] shrink-0"></span>
               本页内容配置化
             </li>
           </ul>
@@ -105,181 +105,17 @@ async function copyWechat() {
 </script>
 
 <style scoped>
-.about {
-  min-height: calc(100vh - 52px);
-  padding: 2rem;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.about-layout {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 2rem;
-  max-width: 960px;
-  width: 100%;
-}
-
-.spacer {
-}
-
-.about-main {
-  display: flex;
-  justify-content: center;
-}
-
-.about-sidebar {
-  width: 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.about-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  max-width: 380px;
-  text-align: center;
-}
-
-.avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #eee;
-}
-
-.name {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-}
-
-.bio {
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.8;
-  margin: 0;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-}
-
-.links {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  margin-top: 0.5rem;
-}
-
 .link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: #555;
-  text-decoration: none;
-  font-size: 0.9rem;
-  border-bottom: 1px dashed #ccc;
-  transition: color 0.2s, border-color 0.2s;
+  @apply inline-flex items-center gap-1 no-underline text-[0.9rem] text-gray-600 border-b border-dashed border-gray-300 transition-[color,border-color] duration-200;
 }
-
 .link:hover {
   color: v-bind('settings.primary');
   border-color: v-bind('settings.primary');
 }
-
 .copy-link {
-  cursor: pointer;
-  position: relative;
+  @apply cursor-pointer relative;
 }
-
 .copy-toast {
-  position: absolute;
-  top: -1.8rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: #fff;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.todo-card, .thanks-card {
-  position: relative;
-  background: #fff;
-  border-radius: 8px;
-  padding: 1.2rem;
-}
-
-.todo-card::before, .thanks-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  padding: 1px;
-  background: linear-gradient(135deg, #e8e8e8 0%, transparent 30%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-.section-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 1rem 0;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-}
-
-.todo-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.todo-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: #888;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-}
-
-.todo-check {
-  width: 14px;
-  height: 14px;
-  border: 1.5px solid #ccc;
-  border-radius: 3px;
-  flex-shrink: 0;
-}
-
-.thanks-items {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.thanks-tag {
-  display: inline-block;
-  background: #eee;
-  color: #555;
-  padding: 0.25rem 0.65rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  @apply absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-px rounded text-[0.7rem] whitespace-nowrap pointer-events-none;
 }
 </style>

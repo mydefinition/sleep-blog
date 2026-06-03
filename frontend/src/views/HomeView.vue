@@ -1,8 +1,12 @@
 <template>
-  <div class="home">
-    <div class="hero">
-      <h1 class="goal-text">今日目标 : {{ dailyTask }}</h1>
-      <button class="random-btn" @click="goRandom">{{ loading ? '加载中...' : '随便看看' }}</button>
+  <div class="flex flex-col items-center justify-center text-center" style="min-height: calc(100vh - 52px)">
+    <div class="flex flex-col items-center gap-10">
+      <h1 class="font-sans text-[2.4rem] font-light text-gray-800 m-0 tracking-[0.06em] goal-text">今日目标 : {{ dailyTask }}</h1>
+      <button
+        class="px-9 py-2.5 text-white border-none rounded-full text-[0.95rem] font-sans cursor-pointer transition-[opacity,transform] duration-200 hover:opacity-85 hover:-translate-y-px"
+        :style="{ background: settings.primary }"
+        @click="goRandom"
+      >{{ loading ? '加载中...' : '随便看看' }}</button>
     </div>
   </div>
 </template>
@@ -52,67 +56,8 @@ async function goRandom() {
 </script>
 
 <style scoped>
-.home {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 52px);
-  text-align: center;
-}
-
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.5rem;
-}
-
-.goal-text {
-  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-  font-size: 2.4rem;
-  font-weight: 300;
-  color: #333;
-  margin: 0;
-  letter-spacing: 0.06em;
-}
-
-.random-btn {
-  padding: 0.6rem 2.2rem;
-  background: v-bind('settings.primary');
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  font-size: 0.95rem;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
-}
-
-.random-btn:hover {
-  opacity: 0.85;
-  transform: translateY(-1px);
-}
-</style>
-
-<style scoped>
-.goal-text {
-  font-family: 'Hiragino Sans GB', 'Noto Sans SC', sans-serif;
-  font-size: 2.4rem;
-  font-weight: 300;
-  color: #333;
-  margin: 0;
-  letter-spacing: 0.06em;
-}
-
 .goal-text::after {
   content: '.';
-  display: inline-block;
-  animation: blink 1.2s step-end infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  @apply inline-block animate-blink;
 }
 </style>
