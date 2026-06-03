@@ -1,8 +1,10 @@
-﻿# sleep blog
+﻿# Sleep Blog
 
-基于 Vue 3 + Spring Boot 3 的个人博客系统。
+## 简介
 
-## 技术栈
+基于 ***Vue 3*** + ***Spring Boot*** 的个人博客系统。拥有写读文章、***Agent*** 自动新闻发布、文件存储等功能。
+
+技术栈如下：
 
 | 层 | 技术 |
 |---|---|
@@ -15,108 +17,184 @@
 | 数据库 | SQLite |
 | 认证 | JWT + BCrypt |
 
-## 页面
+## 功能介绍
 
-| 页面 | 路由 | 权限 |
-|---|---|---|
-| 首页 | `/` | 公开 |
-| 文章列表 | `/articles` | 公开 |
-| 文章详情 | `/articles/:id` | 公开 |
-| 文件存储 | `/files` | 公开 |
-| 关于我 | `/about` | 公开 |
-| 登录 | `/login` | 公开 |
-| 注册 | `/register` | 公开 |
-| 个人信息 | `/profile` | 登录 |
-| 修改信息 | `/profile/edit` | 登录 |
-| 发布文章 | `/write` | ADMIN |
-| 编辑文章 | `/write/:id` | ADMIN |
+// todo
 
-## 用户角色
 
-| 角色 | 权限 |
-|---|---|
-| 管理员 (ADMIN) | 发/编/删文章，上传文件/图片，删评论 |
-| 登录用户 (USER) | 发评论，修改个人信息，下载文件 |
-| 未登录 | 浏览文章和文件 |
 
-## API
+## 构建
 
-### 首页
+> 省流：
+>
+> 至少需配备 **JDK17**，**Maven3.x**，**Node.js18** 的环境。
+>
+> **Windows** 在根目录下执行
+>
+> ```powershell
+> Set-ExecutionPolicy RemoteSigned -Scope Process
+> ./build.ps1
+> ```
+>
+> **Linux** 在根目录下执行
+>
+> ```shell
+> ./build.sh
+> ```
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/home/daily` | 获取今日任务 |
+### 环境要求
 
-### 认证
+构建时请确保以下环境配置
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| POST | `/api/auth/register` | 注册 |
-| POST | `/api/auth/login` | 登录，返回 JWT |
+| 工具        | 版本要求         | 说明                                |
+| ----------- | ---------------- | ----------------------------------- |
+| **JDK**     | $\geq17$         | **Java** 开发环境+运行环境          |
+| **Maven**   | $3.\times$       | **Java** 依赖管理，打包 **fat JAR** |
+| **Node.js** | $\geq18$         | 运行 **Vite**，编译打包前端资源     |
+| **npm**     | 随 **Node** 自带 | 前端依赖管理                        |
 
-### 用户
+也即至少需配备 **JDK17**，**Maven3.x**，**Node.js18** 的环境。
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/user/profile` | 个人信息 |
-| PUT | `/api/user/profile` | 修改用户名/密码 |
+### 自动构建
 
-### 文章
+#### Windows 自动构建
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/articles` | 列表 `?tagId=&page=&size=` |
-| GET | `/api/articles/:id` | 详情 |
-| POST | `/api/articles` | 发布 |
-| PUT | `/api/articles/:id` | 编辑 |
-| DELETE | `/api/articles/:id` | 删除 |
+在 ***Windows*** 下，在项目根目录处运行
 
-### 标签
+```powershell
+./build.ps1 [frontend|backend|all]
+```
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/tags` | 列表 |
-| POST | `/api/tags` | 创建 |
+即可，其中可选项 `fronend`，`backend`，`all` 分别表示 仅构建前端，仅构建后端并打包，构建前后端并打包，默认情况下为 `all`。
 
-### 评论
+若出现类似
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/articles/:id/comments` | 列表 |
-| POST | `/api/articles/:id/comments` | 发表 |
-| DELETE | `/api/comments/:id` | 删除（软删） |
+```powershell
+无法加载文件 xxx\build.ps1，因为在此系统上禁止运行脚本。有关详细信息，请参阅 https:/go.microsoft.com/fwlink/?LinkID=135170 中的 about_Execution_Policies。
+```
 
-### 图片
+报错，是由于 ***PowerShell*** 默认禁止运行脚本文件，请先输入
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| POST | `/api/images/upload` | 上传，返回 `/storage/xxx.png` |
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope Process
+```
 
-### 文件存储
+再输入 ` ./build.ps1` 即可。
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/files` | 完整文件树 JSON |
-| POST | `/api/files/upload` | 上传 `MultipartFile + localId` |
-| POST | `/api/files/mkdir` | 新建文件夹 `{name, localId}` |
-| DELETE | `/api/files/{id}` | 删除（递归删磁盘） |
-| GET | `/api/files/{id}/download` | 下载 |
+#### Linux 自动构建
 
-### 权限管理
+在 ***Linux*** 下，在项目根目录处运行
 
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| GET | `/api/super/users` | 用户列表 |
-| GET | `/api/super/users/find?username=` | 按用户名查找 |
-| PUT | `/api/super/users/promote` | 提升管理员 `{id}` |
-| PUT | `/api/super/users/revoke` | 撤销管理员 `{id}` |
-| PUT | `/api/super/users/reset-password` | 重置密码 `{id, password}` |
+```powershell
+./build.sh [frontend|backend|all]
+```
 
-> Header: `super-token`，密钥 `app.super-secret`
+即可，各可选项释义见上。
+
+#### 自动构建流程与结果
+
+自动构建过程包括并会输出显示以下四个步骤：
+
+```powershell
+=== Building frontend ===
+```
+
+> 构建前端，产物 `frontend/dist/`.
+
+```powershell
+=== Copying frontend dist to backend static ===
+```
+
+> 将前端构建产物 `frontend/dist/` 复制到 `backend/src/main/resources/static/`.
+
+```powershell
+=== Building backend ===
+```
+
+> 构建后端并打包，产物 `backend/target/sample-blog-x.x.x.jar`.
+
+```powershell
+=== Packaging release ===
+```
+
+> 将产物 `backend/target/sample-blog-x.x.x.jar`、`application-prod.yml`、`run.sh` 复制进入 `release/` 下。
+
+其中 `./build.ps1 frontend` 或 `./build.sh frontend` 包括前二步骤；
+
+`./build.ps1 backend` 或 `./build.sh backend` 包括后二步骤；
+
+`./build.ps1` 或 `./build.sh`  或 `./build.ps1 all` 或 `./build.sh all` 包括全四步骤。
+
+可见最终会在根目录下 `release/` 内：
+
+```
+release/
+├── sample-blog-1.0.0.jar
+├── application-prod.yml
+└── run.sh
+```
+
+### 手动构建
+
+手动构建的流程与自动构建流程一致。
+
+#### Windows 手动构建
+
+在根目录下执行以下命令即可：
+
+```powershell
+# === Building frontend ===
+cd frontend
+npm install
+npx vite build
+cd ..
+
+# === Copying frontend dist to backend static ===
+Remove-Item backend\src\main\resources\static\* -Recurse -Force
+Copy-Item frontend\dist\* -Destination backend\src\main\resources\static\ -Recurse -Force
+
+# === Building backend ===
+cd backend
+mvn clean package -DskipTests
+cd ..
+
+# === Packaging release ===
+New-Item -ItemType Directory -Path release -Force
+Copy-Item backend\target\sample-blog-1.0.0.jar -Destination release\
+Copy-Item application-prod.yml -Destination release\
+Copy-Item run.sh -Destination release\
+```
+
+#### Linux 手动构建
+
+在根目录下执行以下命令即可：
+
+```shell
+# === Building frontend ===
+cd frontend
+npm install
+npx vite build
+cd ..
+
+# === Copying frontend dist to backend static ===
+rm -rf backend/src/main/resources/static/*
+cp -r frontend/dist/* backend/src/main/resources/static/
+
+# === Building backend ===
+cd backend
+mvn clean package -DskipTests
+cd ..
+
+# === Packaging release ===
+mkdir -p release
+cp backend/target/sample-blog-1.0.0.jar release/
+cp application-prod.yml release/
+cp run.sh release/
+```
 
 ## 配置
 
-开发环境配置文件位于 `backend/src/main/resources/application.yml`。
+
 
 ```yaml
 app:
@@ -129,104 +207,147 @@ app:
   super-secret: <管理员密钥>
 ```
 
-## 每日任务
+## 配置
 
-任务词条存储在 `tasks.json`（JSON 数组），外置优先：
+> 后端完整配置文件位于 `backend/src/main/resources/application.yml`。
 
-- JAR 同级目录存在 `tasks.json` → 直接读取
-- 不存在 → 首次启动从 JAR 内复制一份出来
-- 修改后下次请求生效，无需重启
-
-日界点为凌晨 4 点，同一天内返回相同结果。
-
-## 构建与部署
-
-### 本地开发
-
-```bash
-# 后端 (http://localhost:8080)
-cd backend && mvn spring-boot:run
-
-# 前端 (http://localhost:5173)
-cd frontend && npm install && npm run dev
-```
-
-### 生产打包
-
-```bash
-# 1. 构建前端
-cd frontend && npm run build
-
-# 2. 复制前端产物到后端静态资源
-rm -rf ../backend/src/main/resources/static/*
-cp -r dist/* ../backend/src/main/resources/static/
-
-# 3. 打包后端（fat JAR，内含前端）
-cd ../backend && mvn clean package -DskipTests
-
-# 4. 收集部署文件
-mkdir -p ../release
-cp ../backend/target/sample-blog-1.0.0.jar ../release/
-cp ../application-prod.yml ../release/
-cp ../run.sh ../release/
-```
-
-产物目录 `release/`：
-
-```
-release/
-├── sample-blog-1.0.0.jar
-├── application-prod.yml
-└── run.sh
-```
-
-### 部署到服务器
-
-将 `release/` 目录上传到服务器（如 `/opt/sample-blog/`）：
-
-```
-/opt/sample-blog/
-├── sample-blog-1.0.0.jar
-├── application-prod.yml
-└── run.sh
-```
-
-编辑 `application-prod.yml`，修改密钥和路径：
+构建完毕后，在 `release/` 下会产生 `application-prod.yml`，内容如下：
 
 ```yaml
 server:
   port: 80
 
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
+
+knife4j:
+  enable: false
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
 app:
   storage:
     image-upload: /data/storage/images
     filestorage-root: /data/storage/files
-  jwt:
-    secret: <真随机密钥，openssl rand -base64 32>
-  super-secret: <真随机密钥>
+  super-secret: 请替换为强随机密钥
 ```
 
-启动：
+### 监听端口
+
+**Spring Boot** 监听端口（覆盖默认值 $8080$）：
+
+```yaml
+server:
+  port: 80
+```
+
+### 在线文档
+
+项目基于 `swagger` 与 `knife4j` 框架构建在线接口文档与调试页面，默认情况下关闭：
+
+```yaml
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
+
+knife4j:
+  enable: false
+```
+
+若需打开可设置：
+
+```yaml
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+knife4j:
+  enable: true
+```
+
+### MyBatis SQL 日志
+
+默认关闭 **MyBatis SQL** 日志，避免生产环境刷屏：
+
+```yaml
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+```
+
+若需输出日志，推荐走 `SLF4J` 配置：
+
+```yaml
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+```
+
+### 存储路径
+
+博客需存储文章 **Markdown** 中的图片，以及云文件系统的文件，从根目录起配置路径：
+
+```yaml
+app:
+  storage:
+    image-upload: /data/storage/images
+    filestorage-root: /data/storage/files
+```
+
+`image-upload` 为云文件系统中的文件存储路径，`filestorage-root` 为 上传至 **Markdown** 中图片的存储路径。
+
+### 高级（超级）权限
+
+为方便调试，博客携带一组 **super API**，请求时需在 `Header` 中携带 `super-token`，其内容为配置文件中的 `super-secret`：
+
+```yaml
+app:
+  super-secret: 请替换为强随机密钥
+```
+
+> 注意区分`super-secret` 与 `super-token`，该历史遗留问题尚未解决。
+
+## 部署
+
+### 部署在 Linux 服务器上
+
+将完整构建的产物（`release/` 下）上传至 **Linux** 服务器内（如 `/opt/sleep-blog/`），为脚本文件 `run.sh` 添加执行权限：
+
+```shell
+chmod +x run.sh
+```
+
+`run.sh` 支持四类指令：
 
 ```bash
-chmod +x run.sh
 ./run.sh start     # 启动
 ./run.sh stop      # 停止
 ./run.sh restart   # 重启
 ./run.sh status    # 查看状态
 ```
 
-### 首次登录
+### 首次启动后产生的文件
 
-| 用户名 | 密码 |
-|---|---|
-| admin | admin123 |
+#### blog.db
 
-登录后请立即修改密码。
+**SQLite** 的 `blog.db`，详细见后文 **数据库** 一章，注意建库会自动产生具有 ***ADMIN*** 权限的初始用户。
+
+#### task.json
+
+首页每日任务轮换词条，格式为一 ***JSON*** 数组。
 
 ## 数据库
 
-SQLite 单文件 `blog.db`，自动建表，数据存储在 JAR 同级目录。
+本项目数据库为 **SQLite**，运行时将使用 **JAR** 同级目录下单文件 `blog.db`，自动建表。数据库表如下，具体见 `\backend\src\main\resources\schema.sql`。
 
 | 表 | 说明 |
 |---|---|
@@ -237,18 +358,8 @@ SQLite 单文件 `blog.db`，自动建表，数据存储在 JAR 同级目录。
 | comment | 评论 |
 | file_storage | 文件/目录树 |
 
-## Knife4j 接口文档
+若无 `blog.db` 将自动建库并产生具有 ***ADMIN*** 权限的初始用户，其用户名为 `admin`，密码为 `admin123`，届时我们忠诚的 **Spring Boot** 也会通过 ***Warning*** 的形式提示您。
 
-生产环境默认关闭。如需启用，编辑 `application-prod.yml`：
+## 接口文档
 
-```yaml
-springdoc:
-  swagger-ui:
-    enabled: true
-  api-docs:
-    enabled: true
-knife4j:
-  enable: true
-```
-
-重启后访问 `http://服务器/doc.html`。
+见 ***配置与部署-配置-在线文档*** 一节，博客采用 **Knife4j** 接口文档，启用情况下访问 `博客根链接/doc.html` 即可。
