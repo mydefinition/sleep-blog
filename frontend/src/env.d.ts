@@ -15,3 +15,6 @@ declare module 'md-editor-v3/lib/es/MdCatalog.mjs' {
   const component: DefineComponent<any, any, any>
   export default component
 }
+
+declare module '*.css'
+declare module 'md-editor-v3/lib/style.css'

@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #42b883;
+  }
+  body {
+    @apply font-sans m-0;
+  }
+}
+
+/* === markdown-body — used by MdPreview rendered content === */
+@layer components {
+  .markdown-body {
+    @apply text-base leading-relaxed;
+  }
+  .markdown-body table {
+    @apply border-collapse w-full my-4;
+  }
+  .markdown-body th,
+  .markdown-body td {
+    @apply border border-solid border-gray-200 px-3 py-2 text-left;
+  }
+  .markdown-body th {
+    @apply bg-gray-100 font-semibold;
+  }
+  .markdown-body tr:nth-child(even) {
+    @apply bg-gray-50;
+  }
+  .markdown-body blockquote {
+    border-left: 4px solid var(--primary);
+    @apply pl-4 text-gray-500 my-4;
+  }
+  .markdown-body code {
+    @apply bg-gray-100 px-1.5 py-px rounded text-[0.9em];
+  }
+  .markdown-body pre {
+    @apply bg-gray-100 p-4 rounded-lg overflow-x-auto;
+  }
+  .markdown-body pre code {
+    @apply bg-transparent p-0;
+  }
+  .markdown-body img {
+    @apply max-w-full rounded-lg;
+  }
+  .markdown-body ul,
+  .markdown-body ol {
+    @apply pl-6;
+  }
+  .markdown-body hr {
+    @apply border-none border-t border-gray-100 my-6;
+  }
+  .markdown-body .katex-display {
+    @apply overflow-x-auto overflow-y-hidden py-2;
+  }
+}
+
+/* === Custom utilities for things Tailwind can't express === */
+@layer utilities {
+  /* gap separator lines between nav items */
+  .separator-gap > :not(:first-child) {
+    @apply relative;
+  }
+  .separator-gap > :not(:first-child)::before {
+    content: '';
+    @apply absolute left-[-0.5rem] top-0 bottom-0 border-l border-gray-100;
+  }
+
+  /* todo card gradient border */
+  .card-gradient-border {
+    @apply relative bg-white rounded-lg;
+  }
+  .card-gradient-border::before {
+    content: "";
+    @apply absolute inset-0 rounded-lg;
+    padding: 1px;
+    background: linear-gradient(135deg, #e8e8e8 0%, transparent 30%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* overflow scroll mask */
+  .overflow-scroll-mask {
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 36px), transparent 100%);
+    mask-image: linear-gradient(to right, black calc(100% - 36px), transparent 100%);
+  }
+}

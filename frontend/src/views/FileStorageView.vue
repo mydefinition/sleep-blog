@@ -1,9 +1,9 @@
-﻿<template>
-  <div class="files-page">
-    <div class="files-main">
-      <div class="files-header">
-        <h2>小仓库</h2>
-        <div v-if="auth.isAdmin" class="toolbar">
+<template>
+  <div class="max-w-[1100px] mx-auto px-4 py-8">
+    <div class="flex-1 min-w-0">
+      <div class="flex justify-between items-center mb-2 flex-wrap gap-4">
+        <h2 class="m-0">小仓库</h2>
+        <div v-if="auth.isAdmin" class="flex items-center gap-2">
           <input type="file" ref="fileInput" @change="onFileSelected" hidden />
           <button @click="triggerUpload" :disabled="uploading" class="btn-upload">
             {{ uploading ? '上传中...' : '上传 📄' }}
@@ -24,56 +24,56 @@
         </div>
       </div>
 
-      <div class="breadcrumb">
+      <div class="py-2 text-[0.9rem] text-gray-400">
         <span v-for="(part, i) in breadcrumbParts" :key="i">
-          <a v-if="i < breadcrumbParts.length - 1" href="#" @click.prevent="navigateTo(i)">{{ part.name }}</a>
-          <span v-else>{{ part.name }}</span>
+          <a v-if="i < breadcrumbParts.length - 1" href="#" @click.prevent="navigateTo(i)" class="text-gray-400 no-underline hover:text-primary">{{ part.name }}</a>
+          <span v-else class="text-primary font-medium">{{ part.name }}</span>
         </span>
       </div>
 
-      <div v-if="loading" class="loading-wrap"><span class="spinner"></span></div>
-      <div v-else-if="errorMsg" class="error">{{ errorMsg }}</div>
+      <div v-if="loading" class="flex justify-center min-h-[30vh] items-center"><span class="spinner"></span></div>
+      <div v-else-if="errorMsg" class="text-[#ff5252] text-center py-8">{{ errorMsg }}</div>
 
-      <table v-else class="file-table">
+      <table v-else class="w-full table-fixed border-collapse text-[0.9rem]">
         <tbody>
           <tr v-if="parentId !== null" class="row-folder" @click="currentDirId = parentId">
-            <td>
+            <td class="!w-8">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
             </td>
-            <td class="name">上级目录</td>
-            <td class="meta size"></td>
-            <td class="user-icon"></td>
-            <td class="meta col-user"></td>
-            <td class="user-icon"></td>
-            <td class="meta col-date"></td>
-            <td v-if="auth.isAdmin" class="col-del"></td>
+            <td class="name overflow-hidden whitespace-nowrap text-gray-800 font-medium">上级目录</td>
+            <td class="meta size !w-[70px] text-right"></td>
+            <td class="user-icon !w-[18px]"></td>
+            <td class="meta col-user !w-[100px]"></td>
+            <td class="user-icon !w-[18px]"></td>
+            <td class="meta col-date !w-[90px]"></td>
+            <td v-if="auth.isAdmin" class="col-del !w-[50px] text-center"></td>
           </tr>
           <tr v-for="n in currentChildren" :key="n.id"
               :class="n.isDir ? 'row-folder' : 'row-file'"
               @click="n.isDir ? currentDirId = n.id : downloadFile(n.id)">
-            <td>{{ n.isDir ? '📁' : '📄' }}</td>
-            <td class="name"><OverflowScroll :text="n.name" /></td>
-            <td class="meta size">{{ n.isDir ? '' : formatSize(n.size!) }}</td>
-            <td class="user-icon">
+            <td class="!w-8">{{ n.isDir ? '📁' : '📄' }}</td>
+            <td class="name overflow-hidden whitespace-nowrap"><OverflowScroll :text="n.name" /></td>
+            <td class="meta size !w-[70px] text-right">{{ n.isDir ? '' : formatSize(n.size!) }}</td>
+            <td class="user-icon !w-[18px] text-gray-400">
               <svg v-if="!n.isDir" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </td>
-            <td class="meta col-user">
+            <td class="meta col-user !w-[100px]">
               <OverflowScroll v-if="!n.isDir" :text="n.uploaderName || ''" />
             </td>
-            <td class="user-icon">
+            <td class="user-icon !w-[18px] text-gray-400">
               <svg v-if="!n.isDir" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
             </td>
-            <td class="meta col-date">
+            <td class="meta col-date !w-[90px]">
               <span v-if="!n.isDir">{{ n.uploadAt }}</span>
             </td>
-            <td v-if="auth.isAdmin" class="col-del">
+            <td v-if="auth.isAdmin" class="col-del !w-[50px] text-center">
               <button class="btn-del" @click.stop="deleteNode(n.id)">删除</button>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <div v-if="!loading && currentChildren.length === 0 && parentId === null" class="empty">—— 此目录为空 ——</div>
+      <div v-if="!loading && currentChildren.length === 0 && parentId === null" class="text-center py-12 text-gray-400 text-[0.9rem]">—— 此目录为空 ——</div>
     </div>
   </div>
 </template>
@@ -100,18 +100,14 @@ const auth = useAuthStore()
 const loading = ref(true)
 const errorMsg = ref('')
 
-// 当前所在目录 id（0 = 根目录）
 const currentDirId = ref(0)
 
-// 全量缓存
 const nodeMap = ref(new Map<number, FileTreeNode>())
 const pathIdMap = ref(new Map<string, number>())
 
-// 上传
 const fileInput = ref<HTMLInputElement | null>(null)
 const uploading = ref(false)
 
-// 新建文件夹
 const showMkdir = ref(false)
 const mkdirName = ref('')
 const mkdirFocused = ref(false)
@@ -128,14 +124,12 @@ function toggleMkdir() {
   }
 }
 
-// 当前目录的子节点
 const currentChildren = computed(() => {
   const node = nodeMap.value.get(currentDirId.value)
   if (!node || !node.children) return []
   return node.children
 })
 
-// 父目录 id
 const parentId = computed(() => {
   if (currentDirId.value === 0) return null
   const node = nodeMap.value.get(currentDirId.value)
@@ -145,7 +139,6 @@ const parentId = computed(() => {
   return pathIdMap.value.get(parentPath) ?? 0
 })
 
-// 面包屑
 interface Crumb { name: string; id: number }
 const breadcrumbParts = computed<Crumb[]>(() => {
   const parts: Crumb[] = [{ name: '根目录', id: 0 }]
@@ -165,7 +158,6 @@ function navigateTo(index: number) {
   currentDirId.value = breadcrumbParts.value[index].id
 }
 
-// 加载
 async function loadTree() {
   loading.value = true
   errorMsg.value = ''
@@ -174,7 +166,6 @@ async function loadTree() {
     const tree: FileTreeNode[] = res.data || []
     const map = new Map<number, FileTreeNode>()
     const pathMap = new Map<string, number>()
-    // 根节点 id=0
     map.set(0, { id: 0, name: '', isDir: true, path: '', children: tree })
     indexTree(tree, map, pathMap)
     nodeMap.value = map
@@ -194,7 +185,6 @@ function indexTree(nodes: FileTreeNode[], map: Map<number, FileTreeNode>, pathMa
   }
 }
 
-// 上传
 function triggerUpload() { fileInput.value?.click() }
 let pendingFile: File | null = null
 function onFileSelected(e: Event) {
@@ -223,7 +213,6 @@ async function doUpload() {
   }
 }
 
-// 新建文件夹
 async function doMkdir() {
   if (!mkdirName.value.trim()) return
   try {
@@ -236,7 +225,6 @@ async function doMkdir() {
   }
 }
 
-// 删除
 async function deleteNode(id: number) {
   const node = nodeMap.value.get(id)
   const msg = node?.isDir ? '确定删除文件夹 "' + node.name + '" 及其所有内容？' : '确定删除文件 "' + (node?.name ?? '') + '"？'
@@ -266,115 +254,73 @@ onMounted(loadTree)
 </script>
 
 <style scoped>
-/* === 页面布局 === */
-.files-page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
-.files-main { flex: 1; min-width: 0; }
+/* breadcrumb */
+.breadcrumb span::after { content: ' / '; color: #ccc; }
+.breadcrumb span:last-child::after { content: ''; }
 
-/* === 头部工具栏 === */
-.files-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 1rem; }
-.files-header h2 { margin: 0; }
-.toolbar { display: flex; align-items: center; gap: 0.5rem; }
-
+/* buttons */
 .btn-upload {
-  padding: 0.35rem 1rem; background: var(--primary); color: #fff;
-  border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: inherit;
+  @apply px-4 py-1.5 bg-primary text-white border-none rounded-md cursor-pointer text-[0.85rem] font-sans disabled:opacity-40 disabled:cursor-not-allowed;
 }
-.btn-upload:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .btn-mkdir {
-  padding: 0.3rem 0.9rem;
-  background: transparent; color: var(--primary);
-  border: 1.5px solid var(--primary); border-radius: 6px;
-  cursor: pointer; font-size: 0.85rem; font-family: inherit;
-  transition: background 0.2s, color 0.2s, border-radius 0.3s;
+  @apply px-3.5 py-1 bg-transparent text-primary border-[1.5px] border-primary rounded-md cursor-pointer text-[0.85rem] font-sans transition-[background,color,border-radius] duration-200 hover:bg-primary hover:text-white;
 }
-.btn-mkdir:hover { background: var(--primary); color: #fff; }
 .btn-mkdir.on {
-  background: var(--primary); color: #fff;
-  border-radius: 20px; border-color: var(--primary);
+  @apply bg-primary text-white rounded-[20px] border-primary;
 }
 
-/* === 新建文件夹滑入输入框 === */
 .mkdir-wrap {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  max-width: 0; overflow: hidden; opacity: 0;
-  transition: max-width 0.3s ease, opacity 0.25s ease;
+  @apply inline-flex items-center gap-1.5 max-w-0 overflow-hidden opacity-0 transition-[max-width,opacity] duration-300;
 }
-.mkdir-wrap.open { max-width: 280px; opacity: 1; }
+.mkdir-wrap.open { @apply max-w-[280px] opacity-100; }
 .mkdir-input {
-  width: 160px; padding: 0.4rem 0.6rem;
-  border: none; border-bottom: 2px solid #eee;
-  font-size: 0.9rem; outline: none; color: #333;
-  font-family: inherit; background: transparent;
-  transition: border-color 0.15s;
+  @apply w-[160px] px-2.5 py-1.5 border-0 border-b-2 border-gray-100 text-[0.9rem] outline-none text-gray-800 font-sans bg-transparent transition-[border-color] duration-150;
 }
-.mkdir-input::placeholder { color: #ccc; }
+.mkdir-input::placeholder { @apply text-gray-300; }
 .mkdir-input:focus { border-bottom-color: var(--primary); }
 .mkdir-wrap.active .mkdir-input { border-bottom-color: var(--primary); }
 .btn-mkdir-confirm {
-  padding: 0.25rem 0.8rem;
-  background: transparent; color: var(--primary);
-  border: 1.5px solid var(--primary); border-radius: 6px;
-  font-size: 0.8rem; font-family: inherit; cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.2s, color 0.2s, border-radius 0.3s, opacity 0.2s;
+  @apply px-3 py-1 bg-transparent text-primary border-[1.5px] border-primary rounded-md text-xs font-sans cursor-pointer whitespace-nowrap transition-[background,color,border-radius,opacity] duration-200;
 }
 .btn-mkdir-confirm:hover:not(:disabled) {
-  background: var(--primary); color: #fff;
-  border-radius: 20px;
+  @apply bg-primary text-white rounded-[20px];
 }
-.btn-mkdir-confirm:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-mkdir-confirm:disabled { @apply opacity-35 cursor-not-allowed; }
 
-/* === 面包屑 === */
-.breadcrumb {
-  margin-bottom: 0; padding: 0.5rem 0; font-size: 0.9rem; color: #999;
-}
-.breadcrumb span::after { content: ' / '; color: #ccc; }
-.breadcrumb span:last-child::after { content: ''; }
-.breadcrumb a { color: #999; text-decoration: none; }
-.breadcrumb a:hover { color: var(--primary); }
-.breadcrumb span:last-child { color: var(--primary); font-weight: 500; }
-
-/* === 文件表格 === */
-.file-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 0.9rem; }
+/* table */
 .file-table td {
-  padding: 0.55rem 0.6rem; border-bottom: 1px solid #f0f0f0; border-top: 1px solid #f0f0f0; overflow: hidden;
+  @apply px-2.5 py-2 border-b border-gray-100 border-t border-gray-100 overflow-hidden;
 }
-.file-table td:first-child { width: 32px; }
-.name { overflow: hidden; white-space: nowrap; }
+.file-table td:first-child { @apply !w-8; }
 
-/* === 行 hover 效果 === */
-.row-folder { cursor: pointer; }
-.row-file { cursor: pointer; }
+/* table row hover */
+.row-folder { @apply cursor-pointer; }
+.row-file { @apply cursor-pointer; }
 
-.row-folder .name, .row-file .name { color: #333; transition: color .2s; }
-.row-folder .name { font-weight: 500; }
+.row-folder .name, .row-file .name { @apply text-gray-800 transition-colors duration-200; }
+.row-folder .name { @apply font-medium; }
 
-.row-folder td:first-child, .row-file td:first-child { border-left: 3px solid transparent; transition: border-color .2s; }
-.row-folder:hover td, .row-file:hover td { background: #fafafa; }
+.row-folder td:first-child, .row-file td:first-child { @apply border-l-[3px] border-transparent transition-[border-color] duration-200; }
+.row-folder:hover td, .row-file:hover td { @apply bg-gray-50; }
 .row-folder:hover .name, .row-file:hover .name { color: var(--primary); }
 .row-folder:hover td:first-child, .row-file:hover td:first-child { border-left-color: var(--primary); }
 
-/* === 元数据列 === */
-.meta { color: #999; font-size: 0.85rem; white-space: nowrap; }
-.size { text-align: right; width: 70px; }
-.user-icon { width: 18px; color: #999; padding: 0.55rem 0 0.55rem 1rem !important; }
-.col-user { width: 100px; padding: 0.55rem 0.3rem 0.55rem 0 !important; }
-.col-date { width: 90px; padding-left: 0 !important; }
+/* meta */
+.meta { @apply text-gray-400 text-[0.85rem] whitespace-nowrap; }
+.size { @apply text-right; }
+.user-icon { @apply text-gray-400 pl-4 !important; }
+.col-user { @apply px-1.5 !important; }
+.col-date { @apply pl-0 !important; }
 
-/* === 删除按钮 === */
-.col-del { width: 50px; text-align: center; }
+/* delete btn */
 .btn-del {
-  background: none; border: 1px solid #e0e0e0; color: #999;
-  font-size: 0.75rem; padding: 0.15rem 0.4rem; border-radius: 4px;
-  cursor: pointer; font-family: inherit;
+  @apply bg-transparent border border-gray-200 text-gray-400 text-xs px-1.5 py-px rounded cursor-pointer font-sans hover:border-[#ff5252] hover:text-[#ff5252];
 }
-.btn-del:hover { border-color: #ff5252; color: #ff5252; }
 
-/* === 通用状态 === */
-.loading-wrap { display: flex; justify-content: center; min-height: 30vh; align-items: center; }
-.spinner { width: 32px; height: 32px; border: 3px solid #e0e0e0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
-.error { color: #ff5252; text-align: center; padding: 2rem; }
-.empty { text-align: center; padding: 3rem 0; color: #bbb; font-size: 0.9rem; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* spinner */
+.spinner {
+  @apply w-8 h-8 border-[3px] border-gray-200 rounded-full animate-spin;
+  border-top-color: var(--primary);
+}
 </style>

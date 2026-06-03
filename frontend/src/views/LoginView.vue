@@ -1,13 +1,13 @@
-﻿<template>
-  <div class="form-page">
-    <h2>登录</h2>
-    <form @submit.prevent="handleLogin">
-      <input v-model="username" type="text" placeholder="用户名" required />
-      <input v-model="password" type="password" placeholder="密码" required />
-      <p v-if="error" class="error">{{ error }}</p>
-      <button type="submit">登录</button>
+<template>
+  <div class="max-w-[400px] mx-auto my-16 p-8">
+    <h2 class="text-center mb-6">登录</h2>
+    <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
+      <input v-model="username" type="text" placeholder="用户名" required class="px-2.5 py-2 border border-gray-200 rounded-md text-base" />
+      <input v-model="password" type="password" placeholder="密码" required class="px-2.5 py-2 border border-gray-200 rounded-md text-base" />
+      <p v-if="error" class="text-[#ff5252] text-[0.85rem]">{{ error }}</p>
+      <button type="submit" class="py-2.5 bg-primary text-white border-none rounded-md text-base cursor-pointer hover:opacity-85">登录</button>
     </form>
-    <p class="switch">没有账号？<router-link to="/register">注册</router-link></p>
+    <p class="text-center mt-4 text-[0.9rem] text-gray-500">没有账号？<router-link to="/register">注册</router-link></p>
   </div>
 </template>
 
@@ -34,14 +34,3 @@ async function handleLogin() {
   }
 }
 </script>
-
-<style scoped>
-.form-page { max-width: 400px; margin: 4rem auto; padding: 2rem; }
-h2 { text-align: center; margin-bottom: 1.5rem; }
-form { display: flex; flex-direction: column; gap: 1rem; }
-input { padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
-button { padding: 0.6rem; background: var(--primary); color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
-button:hover { opacity: 0.85; }
-.error { color: #ff5252; font-size: 0.85rem; }
-.switch { text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #666; }
-</style>

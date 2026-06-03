@@ -1,14 +1,14 @@
 <template>
-  <div class="form-page">
-    <h2>修改信息</h2>
-    <form @submit.prevent="handleUpdate">
-      <label>用户名</label>
-      <input v-model="username" type="text" placeholder="留空不修改" />
-      <label>新密码</label>
-      <input v-model="password" type="password" placeholder="留空不修改" />
-      <p v-if="error" class="error">{{ error }}</p>
-      <p v-if="success" class="success">修改成功</p>
-      <button type="submit">保存</button>
+  <div class="max-w-[400px] mx-auto my-12 p-8">
+    <h2 class="text-center mb-6">修改信息</h2>
+    <form @submit.prevent="handleUpdate" class="flex flex-col gap-3">
+      <label class="text-[0.9rem] text-gray-500">用户名</label>
+      <input v-model="username" type="text" placeholder="留空不修改" class="px-2.5 py-2 border border-gray-200 rounded-md text-base" />
+      <label class="text-[0.9rem] text-gray-500">新密码</label>
+      <input v-model="password" type="password" placeholder="留空不修改" class="px-2.5 py-2 border border-gray-200 rounded-md text-base" />
+      <p v-if="error" class="text-[#ff5252] text-[0.85rem]">{{ error }}</p>
+      <p v-if="success" class="text-[#2e7d32] text-[0.85rem]">修改成功</p>
+      <button type="submit" class="py-2.5 bg-primary text-white border-none rounded-md text-base cursor-pointer mt-2 hover:opacity-85">保存</button>
     </form>
   </div>
 </template>
@@ -38,15 +38,3 @@ async function handleUpdate() {
   }
 }
 </script>
-
-<style scoped>
-.form-page { max-width: 400px; margin: 3rem auto; padding: 2rem; }
-h2 { text-align: center; margin-bottom: 1.5rem; }
-form { display: flex; flex-direction: column; gap: 0.8rem; }
-label { font-size: 0.9rem; color: #666; }
-input { padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
-button { padding: 0.6rem; background: var(--primary); color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; }
-button:hover { opacity: 0.85; }
-.error { color: #ff5252; font-size: 0.85rem; }
-.success { color: #2e7d32; font-size: 0.85rem; }
-</style>

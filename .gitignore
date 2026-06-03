@@ -1,0 +1,30 @@
+node_modules/
+.nuxt/
+.output/
+dist/
+.data/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java
+backend/target/
+*.db
+*.log
+logs/
+
+# Uploads
+storage/
+uploads/
