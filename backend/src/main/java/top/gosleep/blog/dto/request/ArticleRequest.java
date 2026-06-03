@@ -1,4 +1,4 @@
-package com.blog.dto.request;
+package top.gosleep.blog.dto.request;
 
 import lombok.Data;
 import java.util.List;

@@ -1,17 +1,21 @@
-package com.blog.service.impl;
+package top.gosleep.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.blog.common.BusinessException;
-import com.blog.common.ResultCode;
-import com.blog.dto.ArticleDto;
-import com.blog.dto.ArticleListDto;
-import com.blog.dto.request.ArticleRequest;
-import com.blog.entity.*;
-import com.blog.mapper.*;
-import com.blog.service.ArticleService;
-import com.blog.service.TagService;
+import top.gosleep.blog.common.BusinessException;
+import top.gosleep.blog.common.ResultCode;
+import top.gosleep.blog.dto.ArticleDto;
+import top.gosleep.blog.dto.ArticleListDto;
+import top.gosleep.blog.dto.request.ArticleRequest;
+import top.gosleep.blog.entity.Article;
+import top.gosleep.blog.entity.ArticleTag;
+import top.gosleep.blog.entity.User;
+import top.gosleep.blog.mapper.ArticleMapper;
+import top.gosleep.blog.mapper.ArticleTagMapper;
+import top.gosleep.blog.mapper.UserMapper;
+import top.gosleep.blog.service.ArticleService;
+import top.gosleep.blog.service.TagService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,13 +120,13 @@ public class ArticleServiceImpl implements ArticleService {
         if (content == null) return "";
         String plain = content
                 .replaceAll("\\$\\$[\\s\\S]*?\\$\\$", "")
-                .replaceAll("\\$[^\\$]+?\\$", "")
+                .replaceAll("\\$[^$]+?\\$", "")
                 .replaceAll("#{1,6}\\s", "")
                 .replaceAll("[*_~`>\\-\\[\\]()!]", "")
                 .replaceAll("\\n+", " ")
                 .replaceAll("\\s+", " ")
                 .trim();
-        return plain.length() > 200 ? plain.substring(0, 200) + "\u2026" : plain;
+        return plain.length() > 200 ? plain.substring(0, 200) + "..." : plain;
     }
 
     private ArticleListDto toListDto(Article article) {

@@ -1,4 +1,4 @@
-package com.blog.dto;
+package top.gosleep.blog.dto;
 
 import lombok.Data;
 

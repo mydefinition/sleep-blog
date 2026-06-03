@@ -1,11 +1,11 @@
-package com.blog.controller;
+package top.gosleep.blog.controller;
 
-import com.blog.common.Result;
-import com.blog.context.UserContext;
-import com.blog.dto.ArticleDto;
-import com.blog.dto.ArticleListDto;
-import com.blog.dto.request.ArticleRequest;
-import com.blog.service.ArticleService;
+import top.gosleep.blog.common.Result;
+import top.gosleep.blog.context.UserContext;
+import top.gosleep.blog.dto.ArticleDto;
+import top.gosleep.blog.dto.ArticleListDto;
+import top.gosleep.blog.dto.request.ArticleRequest;
+import top.gosleep.blog.service.ArticleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

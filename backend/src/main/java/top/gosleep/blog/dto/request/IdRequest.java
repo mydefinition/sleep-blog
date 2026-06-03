@@ -1,7 +1,8 @@
-package com.blog.dto.request;
+package top.gosleep.blog.dto.request;
 
+import lombok.Data;
+
+@Data
 public class IdRequest {
     private Long id;
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 }

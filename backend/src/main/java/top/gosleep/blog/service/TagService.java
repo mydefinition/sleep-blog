@@ -1,6 +1,6 @@
-package com.blog.service;
+package top.gosleep.blog.service;
 
-import com.blog.dto.TagDto;
+import top.gosleep.blog.dto.TagDto;
 import java.util.List;
 
 public interface TagService {

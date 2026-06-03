@@ -1,39 +1,73 @@
-#!/bin/bash
-# sample-blog ???? (Linux / macOS)
-# ??: ./build.sh
+﻿#!/bin/bash
+# sample-blog build script (Linux / macOS)
+# Usage: ./build.sh [frontend|backend|all]
+#   frontend  - Build frontend only (Vue + Vite)
+#   backend   - Build backend only (Maven, no frontend resources)
+#   all       - Build frontend, copy to backend, build fat JAR, package release (default)
 set -e
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-cd "$ROOT"
 
-echo "=== 1/4 ???? ==="
-cd frontend
-npm install --prefer-offline
-npx vite build || true  # vite ??? chunk-size warning ????
-if [ ! -f dist/index.html ]; then
-  echo "vite build ?????? dist/index.html"
-  exit 1
-fi
-cd ..
+MODE="${1:-all}"
 
-echo "=== 2/4 ????????????? ==="
-STATIC_DIR="backend/src/main/resources/static"
-rm -rf "$STATIC_DIR"/*
-mkdir -p "$STATIC_DIR"
-cp -r frontend/dist/* "$STATIC_DIR/"
+build_frontend() {
+  echo "=== Building frontend ==="
+  cd "$ROOT/frontend"
+  npm install --prefer-offline
+  npx vite build || true
+  if [ ! -f dist/index.html ]; then
+    echo "ERROR: vite build did not produce dist/index.html"
+    exit 1
+  fi
+  cd "$ROOT"
+}
 
-echo "=== 3/4 ???? (fat JAR) ==="
-cd backend
-mvn clean package -DskipTests
-cd ..
+build_backend() {
+  echo "=== Building backend ==="
+  cd "$ROOT/backend"
+  mvn clean package -DskipTests
+  cd "$ROOT"
+}
 
-echo "=== 4/4 ?????? ==="
-mkdir -p release
-cp backend/target/sample-blog-1.0.0.jar release/
-cp application-prod.yml release/
-cp run.sh release/
+copy_frontend_to_static() {
+  echo "=== Copying frontend dist to backend static ==="
+  STATIC_DIR="$ROOT/backend/src/main/resources/static"
+  rm -rf "$STATIC_DIR"/*
+  mkdir -p "$STATIC_DIR"
+  cp -r "$ROOT/frontend/dist/"* "$STATIC_DIR/"
+}
 
-echo ""
-echo "=== ???? ==="
-echo "????: $ROOT/release"
-ls -lh release/
+package_release() {
+  echo "=== Packaging release ==="
+  mkdir -p "$ROOT/release"
+  cp "$ROOT/backend/target/sample-blog-1.0.0.jar" "$ROOT/release/"
+  cp "$ROOT/application-prod.yml" "$ROOT/release/"
+  cp "$ROOT/run.sh" "$ROOT/release/"
+
+  echo ""
+  echo "=== Build complete ==="
+  echo "Release: $ROOT/release"
+  ls -lh "$ROOT/release/"
+}
+
+case "$MODE" in
+  frontend)
+    build_frontend
+    ;;
+  backend)
+    build_backend
+    ;;
+  all)
+    build_frontend
+    copy_frontend_to_static
+    build_backend
+    package_release
+    ;;
+  *)
+    echo "Usage: $0 [frontend|backend|all]"
+    echo "  frontend  - Build frontend only (Vue + Vite)"
+    echo "  backend   - Build backend only (Maven)"
+    echo "  all       - Build frontend, copy to backend, build fat JAR, package release (default)"
+    exit 1
+    ;;
+esac

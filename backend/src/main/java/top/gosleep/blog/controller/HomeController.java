@@ -1,15 +1,13 @@
-package com.blog.controller;
+package top.gosleep.blog.controller;
 
-import com.blog.common.Result;
-import com.blog.dto.HomeDto;
-import com.blog.service.HomeService;
+import top.gosleep.blog.common.Result;
+import top.gosleep.blog.dto.HomeDto;
+import top.gosleep.blog.service.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/home")

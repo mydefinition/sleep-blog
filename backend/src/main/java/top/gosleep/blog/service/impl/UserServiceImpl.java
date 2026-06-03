@@ -1,16 +1,16 @@
-package com.blog.service.impl;
+package top.gosleep.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.blog.common.BusinessException;
-import com.blog.common.ResultCode;
-import com.blog.context.UserContext;
-import com.blog.converter.UserConverter;
-import com.blog.dto.UserDto;
-import com.blog.dto.request.LoginRequest;
-import com.blog.dto.request.RegisterRequest;
-import com.blog.entity.User;
-import com.blog.mapper.UserMapper;
-import com.blog.service.UserService;
+import top.gosleep.blog.common.BusinessException;
+import top.gosleep.blog.common.ResultCode;
+import top.gosleep.blog.context.UserContext;
+import top.gosleep.blog.converter.UserConverter;
+import top.gosleep.blog.dto.UserDto;
+import top.gosleep.blog.dto.request.LoginRequest;
+import top.gosleep.blog.dto.request.RegisterRequest;
+import top.gosleep.blog.entity.User;
+import top.gosleep.blog.mapper.UserMapper;
+import top.gosleep.blog.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

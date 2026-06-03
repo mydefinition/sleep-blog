@@ -1,8 +1,8 @@
-package com.blog.service;
+package top.gosleep.blog.service;
 
-import com.blog.dto.UserDto;
-import com.blog.dto.request.LoginRequest;
-import com.blog.dto.request.RegisterRequest;
+import top.gosleep.blog.dto.UserDto;
+import top.gosleep.blog.dto.request.LoginRequest;
+import top.gosleep.blog.dto.request.RegisterRequest;
 
 public interface UserService {
     void register(RegisterRequest req);

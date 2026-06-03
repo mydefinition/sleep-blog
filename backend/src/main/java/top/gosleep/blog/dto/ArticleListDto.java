@@ -1,12 +1,10 @@
-package com.blog.dto;
+package top.gosleep.blog.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Controller → 前端：文章列表（不含正文）
- */
+/** 前端：文章列表用 */
 @Data
 public class ArticleListDto {
     private Long id;

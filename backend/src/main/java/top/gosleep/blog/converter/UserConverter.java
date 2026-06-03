@@ -1,7 +1,7 @@
-package com.blog.converter;
+package top.gosleep.blog.converter;
 
-import com.blog.dto.UserDto;
-import com.blog.entity.User;
+import top.gosleep.blog.dto.UserDto;
+import top.gosleep.blog.entity.User;
 
 public class UserConverter {
     public static UserDto toDto(User user) {

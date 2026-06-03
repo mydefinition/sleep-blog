@@ -1,7 +1,7 @@
-package com.blog.context;
+package top.gosleep.blog.context;
 
-import com.blog.dto.UserDto;
-import com.blog.entity.User;
+import top.gosleep.blog.dto.UserDto;
+import top.gosleep.blog.entity.User;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.util.concurrent.atomic.AtomicReference;

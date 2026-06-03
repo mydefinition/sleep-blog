@@ -1,4 +1,4 @@
-package com.blog.model;
+package top.gosleep.blog.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
@@ -15,8 +15,6 @@ public class FileTreeNode {
     public String uploadAt;
     public String path;
     public List<FileTreeNode> children;
-
-    public FileTreeNode() {}
 
     public FileTreeNode(Long id, String name, Boolean isDir) {
         this.id = id;

@@ -1,4 +1,4 @@
-package com.blog.common;
+package top.gosleep.blog.common;
 
 import lombok.Getter;
 

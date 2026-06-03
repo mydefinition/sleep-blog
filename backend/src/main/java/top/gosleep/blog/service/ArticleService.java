@@ -1,9 +1,9 @@
-package com.blog.service;
+package top.gosleep.blog.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.blog.dto.ArticleDto;
-import com.blog.dto.ArticleListDto;
-import com.blog.dto.request.ArticleRequest;
+import top.gosleep.blog.dto.ArticleDto;
+import top.gosleep.blog.dto.ArticleListDto;
+import top.gosleep.blog.dto.request.ArticleRequest;
 
 public interface ArticleService {
     IPage<ArticleListDto> list(String tagIdsStr, int pageNum, int pageSize);
