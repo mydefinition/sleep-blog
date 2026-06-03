@@ -1,5 +1,7 @@
 ﻿# Sleep Blog
 
+> 为了我的宝贝写了非常详细的 **README**.
+
 ## 简介
 
 基于 ***Vue 3*** + ***Spring Boot*** 的个人博客系统。拥有写读文章、***Agent*** 自动新闻发布、文件存储等功能。
@@ -79,7 +81,7 @@
 Set-ExecutionPolicy RemoteSigned -Scope Process
 ```
 
-再输入 ` ./build.ps1` 即可。
+再输入 `./build.ps1` 即可。
 
 #### Linux 自动构建
 
@@ -190,21 +192,6 @@ mkdir -p release
 cp backend/target/sample-blog-1.0.0.jar release/
 cp application-prod.yml release/
 cp run.sh release/
-```
-
-## 配置
-
-
-
-```yaml
-app:
-  storage:
-    image-upload: ./storage/images     # 图片存储路径
-    filestorage-root: ./storage/files  # 文件存储路径
-  jwt:
-    secret: <至少32字符的随机密钥>
-    expiration: 86400000               # 24h
-  super-secret: <管理员密钥>
 ```
 
 ## 配置
