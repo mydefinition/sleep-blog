@@ -1,7 +1,7 @@
-package com.blog.service.impl;
+package top.gosleep.blog.service.impl;
 
-import com.blog.common.PathUtil;
-import com.blog.service.ImageService;
+import top.gosleep.blog.common.PathUtil;
+import top.gosleep.blog.service.ImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +33,7 @@ public class ImageServiceImpl implements ImageService {
         String originalName = file.getOriginalFilename();
         String ext = originalName != null && originalName.contains(".")
                 ? originalName.substring(originalName.lastIndexOf(".")) : "";
-        String filename = UUID.randomUUID().toString() + ext;
+        String filename = UUID.randomUUID() + ext;
 
         Path target = dir.resolve(filename);
         file.transferTo(target.toFile());

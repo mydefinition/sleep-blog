@@ -1,7 +1,7 @@
-package com.blog.mapper;
+package top.gosleep.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.blog.entity.Comment;
+import top.gosleep.blog.entity.Comment;
 
 public interface CommentMapper extends BaseMapper<Comment> {
 }

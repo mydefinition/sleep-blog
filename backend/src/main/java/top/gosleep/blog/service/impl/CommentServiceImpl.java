@@ -1,16 +1,16 @@
-package com.blog.service.impl;
+package top.gosleep.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.blog.dto.CommentDto;
-import com.blog.common.BusinessException;
-import com.blog.common.ResultCode;
-import com.blog.entity.Article;
-import com.blog.entity.Comment;
-import com.blog.entity.User;
-import com.blog.mapper.ArticleMapper;
-import com.blog.mapper.CommentMapper;
-import com.blog.mapper.UserMapper;
-import com.blog.service.CommentService;
+import top.gosleep.blog.dto.CommentDto;
+import top.gosleep.blog.common.BusinessException;
+import top.gosleep.blog.common.ResultCode;
+import top.gosleep.blog.entity.Article;
+import top.gosleep.blog.entity.Comment;
+import top.gosleep.blog.entity.User;
+import top.gosleep.blog.mapper.ArticleMapper;
+import top.gosleep.blog.mapper.CommentMapper;
+import top.gosleep.blog.mapper.UserMapper;
+import top.gosleep.blog.service.CommentService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

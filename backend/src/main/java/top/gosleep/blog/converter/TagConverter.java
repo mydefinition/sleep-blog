@@ -1,7 +1,7 @@
-package com.blog.converter;
+package top.gosleep.blog.converter;
 
-import com.blog.dto.TagDto;
-import com.blog.entity.Tag;
+import top.gosleep.blog.dto.TagDto;
+import top.gosleep.blog.entity.Tag;
 
 public class TagConverter {
     public static TagDto toDto(Tag tag) {

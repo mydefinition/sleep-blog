@@ -1,8 +1,8 @@
-package com.blog.controller;
+package top.gosleep.blog.controller;
 
-import com.blog.common.Result;
-import com.blog.context.UserContext;
-import com.blog.service.ImageService;
+import top.gosleep.blog.common.Result;
+import top.gosleep.blog.context.UserContext;
+import top.gosleep.blog.service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;

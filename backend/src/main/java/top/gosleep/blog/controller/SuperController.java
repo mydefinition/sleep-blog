@@ -1,16 +1,16 @@
-package com.blog.controller;
+package top.gosleep.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.blog.common.BusinessException;
-import com.blog.common.Result;
-import com.blog.common.ResultCode;
-import com.blog.context.UserContext;
-import com.blog.converter.UserConverter;
-import com.blog.dto.request.IdRequest;
-import com.blog.dto.request.ResetPasswordRequest;
-import com.blog.entity.User;
-import com.blog.entity.User.Role;
-import com.blog.mapper.UserMapper;
+import top.gosleep.blog.common.BusinessException;
+import top.gosleep.blog.common.Result;
+import top.gosleep.blog.common.ResultCode;
+import top.gosleep.blog.context.UserContext;
+import top.gosleep.blog.converter.UserConverter;
+import top.gosleep.blog.dto.request.IdRequest;
+import top.gosleep.blog.dto.request.ResetPasswordRequest;
+import top.gosleep.blog.entity.User;
+import top.gosleep.blog.entity.User.Role;
+import top.gosleep.blog.mapper.UserMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/super")
-@Tag(name = "权限管理（需密钥）")
+@Tag(name = "权限管理")
 public class SuperController {
     
     @Value("${app.super-secret}")

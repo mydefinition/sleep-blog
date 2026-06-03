@@ -1,11 +1,8 @@
-package com.blog.dto;
+package top.gosleep.blog.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
 
-/**
- * Controller → 前端（聚合 username）
- */
 @Data
 public class CommentDto {
     private Long id;

@@ -1,6 +1,7 @@
-package com.blog.config;
+package top.gosleep.blog.config;
 
-import com.blog.common.PathUtil;
+import jakarta.validation.constraints.NotNull;
+import top.gosleep.blog.common.PathUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;

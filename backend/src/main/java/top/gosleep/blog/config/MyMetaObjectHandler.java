@@ -1,4 +1,4 @@
-package com.blog.config;
+package top.gosleep.blog.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;

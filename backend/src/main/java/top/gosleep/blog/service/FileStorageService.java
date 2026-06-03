@@ -1,7 +1,7 @@
-package com.blog.service;
+package top.gosleep.blog.service;
 
-import com.blog.entity.FileStorage;
-import com.blog.model.FileTreeNode;
+import top.gosleep.blog.entity.FileStorage;
+import top.gosleep.blog.model.FileTreeNode;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 

@@ -1,13 +1,13 @@
-package com.blog.controller;
+package top.gosleep.blog.controller;
 
-import com.blog.common.BusinessException;
-import com.blog.common.Result;
-import com.blog.common.ResultCode;
-import com.blog.context.UserContext;
-import com.blog.dto.UserDto;
-import com.blog.dto.request.LoginRequest;
-import com.blog.dto.request.RegisterRequest;
-import com.blog.service.UserService;
+import top.gosleep.blog.common.BusinessException;
+import top.gosleep.blog.common.Result;
+import top.gosleep.blog.common.ResultCode;
+import top.gosleep.blog.context.UserContext;
+import top.gosleep.blog.dto.UserDto;
+import top.gosleep.blog.dto.request.LoginRequest;
+import top.gosleep.blog.dto.request.RegisterRequest;
+import top.gosleep.blog.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

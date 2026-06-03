@@ -1,6 +1,6 @@
-package com.blog.dto;
+package top.gosleep.blog.dto;
 
-import com.blog.entity.User;
+import top.gosleep.blog.entity.User;
 import lombok.Data;
 import java.time.LocalDateTime;
 

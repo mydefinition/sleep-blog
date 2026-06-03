@@ -1,10 +1,11 @@
-package com.blog.controller;
+package top.gosleep.blog.controller;
 
-import com.blog.common.Result;
-import com.blog.context.UserContext;
-import com.blog.model.FileTreeNode;
-import com.blog.dto.request.MkdirRequest;
-import com.blog.service.FileStorageService;
+import top.gosleep.blog.common.Result;
+import top.gosleep.blog.context.UserContext;
+import top.gosleep.blog.model.FileTreeNode;
+import top.gosleep.blog.dto.request.MkdirRequest;
+import top.gosleep.blog.entity.FileStorage;
+import top.gosleep.blog.service.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.io.Resource;
@@ -66,7 +67,7 @@ public class FileStorageController {
     @Operation(summary = "下载文件")
     public ResponseEntity<Resource> download(@PathVariable Long id) throws IOException {
         String abs = fileStorageService.absolutePath(id);
-        com.blog.entity.FileStorage fs = fileStorageService.getById(id);
+        FileStorage fs = fileStorageService.getById(id);
         Resource resource = new UrlResource(Paths.get(abs).toUri());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,

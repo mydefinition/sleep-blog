@@ -1,10 +1,6 @@
-package com.blog.context;
+package top.gosleep.blog.context;
 
-import com.blog.dto.UserDto;
-import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
 public enum SessionKey {

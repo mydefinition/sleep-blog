@@ -1,9 +1,7 @@
-package com.blog.context;
+package top.gosleep.blog.context;
 
-import com.blog.common.Debug;
-import com.blog.dto.UserDto;
+import top.gosleep.blog.dto.UserDto;
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Component;
@@ -20,6 +18,7 @@ public class UserContextFilter implements Filter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpSession session = req.getSession(true);

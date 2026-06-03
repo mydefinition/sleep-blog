@@ -1,7 +1,7 @@
-package com.blog.service.impl;
+package top.gosleep.blog.service.impl;
 
-import com.blog.dto.HomeDto;
-import com.blog.service.HomeService;
+import top.gosleep.blog.dto.HomeDto;
+import top.gosleep.blog.service.HomeService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class HomeServiceImpl implements HomeService {
                 Files.copy(in, external);
             }
         }
-        pool = MAPPER.readValue(external.toFile(), new TypeReference<List<String>>() {});
+        pool = MAPPER.readValue(external.toFile(), new TypeReference<>() {});
         if (pool == null || pool.isEmpty()) {
             throw new IllegalStateException("tasks.json is empty or missing");
         }

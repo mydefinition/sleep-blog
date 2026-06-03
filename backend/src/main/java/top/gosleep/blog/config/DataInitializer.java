@@ -1,8 +1,8 @@
-package com.blog.config;
+package top.gosleep.blog.config;
 
-import com.blog.entity.User;
-import com.blog.entity.User.Role;
-import com.blog.mapper.UserMapper;
+import top.gosleep.blog.entity.User;
+import top.gosleep.blog.entity.User.Role;
+import top.gosleep.blog.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
