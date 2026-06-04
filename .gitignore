@@ -25,6 +25,10 @@ backend/target/
 *.log
 logs/
 
+# Build
+backend/src/main/resources/static/
+release/
+
 # Uploads
 storage/
 uploads/
