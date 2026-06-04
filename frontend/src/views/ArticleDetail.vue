@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import MdPreview from 'md-editor-v3/lib/es/MdPreview.mjs'
 import MdCatalog from 'md-editor-v3/lib/es/MdCatalog.mjs'
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed,watch} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '@/api'
 import { useAuthStore } from '@/stores/auth'
@@ -79,7 +79,7 @@ const displayContent = computed(() => article.value?.content || '')
 const allArticles = ref<Article[]>([])
 const neighbors = computed(() => {
   const idx = allArticles.value.findIndex(a => a.id === Number(route.params.id))
-  return { prev: idx < allArticles.value.length - 1 ? allArticles.value[idx + 1] : null, next: idx > 0 ? allArticles.value[idx - 1] : null }
+  return { prev:  idx > 0 ? allArticles.value[idx - 1] : null , next: idx < allArticles.value.length - 1 ? allArticles.value[idx + 1] : null}
 })
 
 async function fetchArticle() { try { const res = await api.get('/api/articles/' + route.params.id); article.value = res.data } catch { router.push('/articles') } finally { loading.value = false } }
@@ -105,6 +105,19 @@ function onScroll() {
   if (total <= 0) { scrollProgress.value = 0; return }
   scrollProgress.value = Math.min(1, Math.max(0, -rect.top / total))
 }
+
+watch(
+  () => route.params.id,
+  (newId, oldId) => {
+    if (newId && newId !== oldId) {
+      loading.value = true
+      fetchArticle()
+      fetchComments()
+      window.scrollTo(0, 0)
+      scrollProgress.value = 0
+    }
+  }
+)
 
 onMounted(() => { fetchArticle(); fetchAll(); fetchComments(); window.addEventListener('scroll', onScroll, { passive: true }) })
 onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
