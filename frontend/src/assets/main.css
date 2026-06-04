@@ -3,75 +3,69 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --primary: #42b883;
-  }
-  body {
-    @apply font-sans m-0;
-  }
+  :root { --primary: #42b883; }
+  body { @apply font-sans m-0; }
 }
 
-/* === markdown-body — used by MdPreview rendered content === */
 @layer components {
-  .markdown-body {
-    @apply text-base leading-relaxed;
-  }
-  .markdown-body table {
-    @apply border-collapse w-full my-4;
-  }
-  .markdown-body th,
-  .markdown-body td {
-    @apply border border-solid border-gray-200 px-3 py-2 text-left;
-  }
-  .markdown-body th {
-    @apply bg-gray-100 font-semibold;
-  }
-  .markdown-body tr:nth-child(even) {
-    @apply bg-gray-50;
-  }
-  .markdown-body blockquote {
-    border-left: 4px solid var(--primary);
-    @apply pl-4 text-gray-500 my-4;
-  }
-  .markdown-body code {
-    @apply bg-gray-100 px-1.5 py-px rounded text-[0.9em];
-  }
-  .markdown-body pre {
-    @apply bg-gray-100 p-4 rounded-lg overflow-x-auto;
-  }
-  .markdown-body pre code {
-    @apply bg-transparent p-0;
-  }
-  .markdown-body img {
-    @apply max-w-full rounded-lg;
-  }
-  .markdown-body ul,
-  .markdown-body ol {
-    @apply pl-6;
-  }
-  .markdown-body hr {
-    @apply border-none border-t border-gray-100 my-6;
-  }
-  .markdown-body .katex-display {
-    @apply overflow-x-auto overflow-y-hidden py-2;
-  }
+  /* === markdown-body (MdPreview rendered content) === */
+  .markdown-body { @apply text-base leading-relaxed; }
+  .markdown-body table { @apply border-collapse w-full my-4; }
+  .markdown-body th, .markdown-body td { @apply border border-solid border-gray-200 px-3 py-2 text-left; }
+  .markdown-body th { @apply bg-gray-100 font-semibold; }
+  .markdown-body tr:nth-child(even) { @apply bg-gray-50; }
+  .markdown-body blockquote { border-left: 4px solid var(--primary); @apply pl-4 text-gray-500 my-4; }
+  .markdown-body code { @apply bg-gray-100 px-1.5 py-px rounded text-[0.9em]; }
+  .markdown-body pre { @apply bg-gray-100 p-4 rounded-lg overflow-x-auto; }
+  .markdown-body pre code { @apply bg-transparent p-0; }
+  .markdown-body img { @apply max-w-full rounded-lg; }
+  .markdown-body ul, .markdown-body ol { @apply pl-6; }
+  .markdown-body hr { @apply border-none border-t border-gray-100 my-6; }
+  .markdown-body .katex-display { @apply overflow-x-auto overflow-y-hidden py-2; }
+
+  /* === Navbar shared classes === */
+  .nav-link { @apply font-mono inline-flex items-center gap-1 text-gray-600 no-underline text-sm px-3 py-1 rounded-md; }
+  .nav-link:hover { @apply text-primary; }
+  .nav-active { @apply bg-primary text-white; }
+
+  .nav-btn { @apply bg-transparent border border-gray-200 px-3 py-1 rounded text-[0.85rem] text-gray-500 cursor-pointer; }
+  .nav-btn:hover { @apply border-primary text-primary; }
+
+  /* === About page social links === */
+  .link { @apply inline-flex items-center gap-1 no-underline text-[0.9rem] text-gray-600 border-b border-dashed border-gray-300 transition-colors duration-200 cursor-pointer relative hover:text-primary hover:border-primary; }
+
+  /* === ArticleList mode buttons === */
+  .mode-btn { @apply bg-transparent border-none p-0 w-[30px] text-center cursor-pointer text-[1.15rem] font-serif font-bold leading-none transition-colors duration-150 text-gray-400 hover:text-gray-500; }
+  .mode-btn.active { @apply text-primary; }
+  .mode-btn:disabled { @apply opacity-30 cursor-not-allowed text-gray-300; }
+
+  /* === Breadcrumb separator === */
+  .breadcrumb-sep::after { content: ' / '; color: #ccc; }
+  .breadcrumb-sep:last-child::after { content: ''; }
+
+  /* === md-editor-v3 overrides === */
+  .toc-sidebar .md-editor-catalog-link { @apply text-gray-600; }
+  .toc-sidebar .md-editor-catalog-active > span { color: var(--primary); }
+  .toc-sidebar .md-editor-catalog-link span:hover { color: var(--primary); }
+  .toc-sidebar .md-editor-catalog-indicator { background: var(--primary); }
+  .content-wrap blockquote { border-left-color: var(--primary); }
+  .content-wrap .md-editor { @apply h-auto border-none; }
+  .content-wrap .md-editor-preview-wrapper { @apply p-0; }
+
+  /* === md-editor global blockquote (WriteView) === */
+  .md-editor-preview-wrapper blockquote { border-left: 0.25em solid var(--primary) !important; }
 }
 
-/* === Custom utilities for things Tailwind can't express === */
 @layer utilities {
-  /* gap separator lines between nav items */
-  .separator-gap > :not(:first-child) {
-    @apply relative;
-  }
+  /* nav gap separator lines */
+  .separator-gap > :not(:first-child) { @apply relative; }
   .separator-gap > :not(:first-child)::before {
     content: '';
     @apply absolute left-[-0.5rem] top-0 bottom-0 border-l border-gray-100;
   }
 
-  /* todo card gradient border */
-  .card-gradient-border {
-    @apply relative bg-white rounded-lg;
-  }
+  /* about page card gradient border */
+  .card-gradient-border { @apply relative bg-white rounded-lg; }
   .card-gradient-border::before {
     content: "";
     @apply absolute inset-0 rounded-lg;
@@ -83,9 +77,15 @@
     pointer-events: none;
   }
 
-  /* overflow scroll mask */
+  /* overflow scroll fade mask */
   .overflow-scroll-mask {
     -webkit-mask-image: linear-gradient(to right, black calc(100% - 36px), transparent 100%);
     mask-image: linear-gradient(to right, black calc(100% - 36px), transparent 100%);
+  }
+
+  /* color-mix based hover — Tailwind has no equivalent */
+  .filter-tag-hover {
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
   }
 }
