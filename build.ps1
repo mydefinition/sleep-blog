@@ -1,4 +1,4 @@
-﻿# sample-blog build script (Windows PowerShell)
+# sample-blog build script (Windows PowerShell)
 # Usage: .\build.ps1 [frontend|backend|all]
 #   frontend  - Build frontend only (Vue + Vite)
 #   backend   - Build backend only (Maven, no frontend resources)
@@ -8,20 +8,6 @@ param([string]$Mode = "all")
 
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
-
-function Find-MavenHome {
-    # 1) %TEMP%\maven-install
-    $mvn = Get-ChildItem "$env:TEMP\maven-install" -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
-    if ($mvn) { return $mvn.FullName }
-    # 2) ~/.m2/wrapper/dists (Maven wrapper cache)
-    $dists = Get-ChildItem "$env:USERPROFILE\.m2\wrapper\dists\apache-maven-*-bin" -Directory -ErrorAction SilentlyContinue
-    if ($dists) {
-        $latest = $dists | Sort-Object Name -Descending | Select-Object -First 1
-        $inner = Get-ChildItem $latest.FullName -Directory | Select-Object -First 1
-        if ($inner) { return $inner.FullName }
-    }
-    return $null
-}
 
 function Build-Frontend {
     Write-Host "=== Building frontend ===" -ForegroundColor Cyan
@@ -35,16 +21,9 @@ function Build-Frontend {
 
 function Build-Backend {
     Write-Host "=== Building backend ===" -ForegroundColor Cyan
-    $mavenHome = Find-MavenHome
-    if (-not $mavenHome) {
-        throw "Maven not found. Please install Maven or place it in `$env:TEMP\maven-install"
-    }
-    Write-Host "  Using Maven: $mavenHome" -ForegroundColor DarkGray
-    $env:MAVEN_HOME = $mavenHome
-    $env:PATH = "$mavenHome\bin;$env:PATH"
     Push-Location "$root\backend"
     cmd /c "mvn clean package -DskipTests 2>&1"
-    if ($LASTEXITCODE -ne 0) { throw "mvn package failed" }
+    if ($LASTEXITCODE -ne 0) { throw 'mvn package failed. Is Maven installed and on PATH?' }
     Pop-Location
 }
 
