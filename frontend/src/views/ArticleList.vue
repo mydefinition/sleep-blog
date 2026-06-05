@@ -10,8 +10,8 @@
       <div class="flex flex-wrap gap-1.5">
         <span
           v-for="t in tagTree" :key="t.id"
-          class="inline-flex items-center gap-[3px] px-2.5 py-1 border border-transparent rounded-md cursor-pointer text-[0.82rem] text-gray-600 transition-all duration-150 filter-tag-hover"
-          :class="{ '!bg-primary !text-white': selectedTags.includes(t.id), 'filter-tag-hover': hoveredTag === t.name && !selectedTags.includes(t.id) }"
+          class="inline-flex items-center gap-[3px] px-2.5 py-1 border border-transparent rounded-full cursor-pointer text-[0.82rem] text-gray-600  transition-all duration-150"
+          :class="{ '!bg-primary !text-white': selectedTags.includes(t.id), '!text-primary !border-primary': hoveredTag === t.name && !selectedTags.includes(t.id) }"
           @click="selectTag(t.id)"
           @mouseenter="hoveredTag = t.name"
           @mouseleave="hoveredTag = ''"
