@@ -1,7 +1,12 @@
 <template>
   <div class="max-w-[1200px] mx-auto px-4 py-8 flex gap-8 items-start">
     <aside v-if="tagTree.length" class="w-[240px] shrink-0 sticky top-[68px] border-r border-gray-100 pr-4">
-      <h3 class="text-[0.9rem] text-gray-800 m-0 mb-2.5">标签列表</h3>
+      <h3 class="text-[0.9rem] text-gray-800 m-0 mb-2.5 flex justify-between items-center">标签列表
+        <span class="inline-flex gap-1.5 items-center">
+          <button class="mode-btn" :class="{ active: andMode && selectedTags.length }" :disabled="!selectedTags.length" @click="andMode = true">&amp;&amp;</button>
+          <button class="mode-btn" :class="{ active: !andMode && selectedTags.length }" :disabled="!selectedTags.length" @click="andMode = false">||</button>
+        </span>
+      </h3>
       <div class="flex flex-wrap gap-1.5">
         <span
           v-for="t in tagTree" :key="t.id"
@@ -17,9 +22,9 @@
     <div class="flex-1 min-w-0">
       <div class="flex justify-between items-center mb-4">
         <h2 class="m-0">文章列表</h2>
-        <span class="inline-flex items-center gap-1 transition-colors duration-150" :class="{ 'text-primary': search || searchFocused }">
+        <span class="inline-flex items-center gap-1 text-gray-300 transition-colors duration-150" :class="{ '!text-primary': search || searchFocused }">
           <input v-model="search" placeholder="搜索标题..." class="px-3 py-1.5 border-0 border-b-2 border-gray-100 text-[0.9rem] outline-none w-[200px] text-gray-800 font-sans bg-transparent transition-[border-color] duration-150 placeholder:text-gray-300 focus:border-b-primary" @focus="searchFocused = true" @blur="searchFocused = false" />
-          <Search :size="14" class="text-gray-300 shrink-0" />
+          <Search :size="14" class="shrink-0" />
         </span>
       </div>
       <div v-if="loading" class="flex justify-center items-center min-h-[40vh]"><span class="inline-block w-8 h-8 border-[3px] border-gray-200 rounded-full animate-spin border-t-primary"></span></div>
@@ -53,7 +58,7 @@ import type { Article, Tag as TagType } from '@/types'
 const allArticles = ref<Article[]>([]); const loading = ref(true); const errorMsg = ref('')
 const page = ref(1); const pageSize = 10
 const tagTree = ref<TagType[]>([]); const selectedTags = ref<number[]>([])
-const hoveredTag = ref(''); const search = ref(''); const searchFocused = ref(false)
+const hoveredTag = ref(''); const andMode = ref(false); const search = ref(''); const searchFocused = ref(false)
 
 const filtered = computed(() => {
   let arr = allArticles.value
@@ -61,7 +66,9 @@ const filtered = computed(() => {
   if (!selectedTags.value.length) return arr
   return arr.filter(a => {
     const ids = (a.tags || []).map(t => t.id)
-    return selectedTags.value.every(id => ids.includes(id)) || selectedTags.value.some(id => ids.includes(id))
+    return andMode.value
+      ? selectedTags.value.every(id => ids.includes(id))
+      : selectedTags.value.some(id => ids.includes(id))
   })
 })
 
