@@ -9,7 +9,7 @@
         <span
           v-for="t in article.tags"
           :key="t.id"
-          class="inline-flex items-center gap-[3px] px-[0.55rem] py-[0.15rem] rounded-[10px] text-[0.85rem] text-gray-500 transition-all duration-150 cursor-pointer hover:text-primary hover:[outline:1px_solid_var(--primary)]"
+          class="inline-flex items-center gap-[3px] px-[0.55rem] py-[0.15rem] rounded-full text-[0.85rem] text-gray-500 transition-all duration-150 cursor-pointer hover:text-primary hover:[outline:1px_solid_var(--primary)]"
           :class="{ '!bg-primary !text-white': selectedTags.includes(t.id), 'text-primary !outline !outline-1 outline-primary': hoveredTag === t.name && !selectedTags.includes(t.id) }"
           @click.stop="$emit('selectTag', t.id)"
           @mouseenter="$emit('hoverTag', t.name)"
