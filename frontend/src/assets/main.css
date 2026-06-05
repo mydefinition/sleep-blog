@@ -26,7 +26,9 @@
   /* === Navbar shared classes === */
   .nav-link { @apply font-mono inline-flex items-center gap-1 text-gray-600 no-underline text-sm px-3 py-1 rounded-md; }
   .nav-link:hover { @apply text-primary; }
-  .nav-active { @apply bg-primary text-white; }
+  .nav-link.nav-disabled,
+  .nav-link.nav-disabled:hover { color: theme('colors.gray.300') !important; }
+  .nav-active { @apply bg-primary text-white hover:text-white; }
 
   .nav-btn { @apply bg-transparent border border-gray-200 px-3 py-1 rounded text-[0.85rem] text-gray-500 cursor-pointer; }
   .nav-btn:hover { @apply border-primary text-primary; }
