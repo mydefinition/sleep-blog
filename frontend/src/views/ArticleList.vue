@@ -19,31 +19,32 @@
       </div>
     </aside>
 
-    <div class="flex-1 min-w-0">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="m-0">文章列表</h2>
-        <span class="inline-flex items-center gap-1 text-gray-300 transition-colors duration-150" :class="{ '!text-primary': search || searchFocused }">
-          <input v-model="search" placeholder="搜索标题..." class="px-3 py-1.5 border-0 border-b-2 border-gray-100 text-[0.9rem] outline-none w-[200px] text-gray-800 font-sans bg-transparent transition-[border-color] duration-150 placeholder:text-gray-300 focus:border-b-primary" @focus="searchFocused = true" @blur="searchFocused = false" />
-          <Search :size="14" class="shrink-0" />
-        </span>
+    <div class="flex-1 min-w-0 flex flex-col">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="m-0">文章列表</h2>
+          <span class="inline-flex items-center gap-1 text-gray-300 transition-colors duration-150" :class="{ '!text-primary': search || searchFocused }">
+            <input v-model="search" placeholder="搜索标题..." class="px-3 py-1.5 border-0 border-b-2 border-gray-100 text-[0.9rem] outline-none w-[200px] text-gray-800 font-sans bg-transparent transition-[border-color] duration-150 placeholder:text-gray-300" :class="{ '!border-b-primary': search || searchFocused }" @focus="searchFocused = true" @blur="searchFocused = false" />
+            <Search :size="14" class="shrink-0" />
+          </span>
+        </div>
+        <div v-if="loading" class="flex justify-center items-center min-h-[40vh]"><span class="inline-block w-8 h-8 border-[3px] border-gray-200 rounded-full animate-spin border-t-primary"></span></div>
+        <div v-else-if="errorMsg">{{ errorMsg }}</div>
+        <div v-else-if="paged.length === 0" class="text-center py-16 text-gray-400 text-[0.95rem]">—— 暂无文章 QAQ ——</div>
+        <div v-else>
+          <ArticleCard
+            v-for="a in paged" :key="a.id" :article="a" :selectedTags="selectedTags" :hoveredTag="hoveredTag"
+            @click="(a) => $router.push('/articles/' + a.id)"
+            @selectTag="selectTag"
+            @hoverTag="(name) => { hoveredTag = name }"
+          />
+        </div>
       </div>
-      <div v-if="loading" class="flex justify-center items-center min-h-[40vh]"><span class="inline-block w-8 h-8 border-[3px] border-gray-200 rounded-full animate-spin border-t-primary"></span></div>
-      <div v-else-if="errorMsg">{{ errorMsg }}</div>
-      <div v-else-if="paged.length === 0" class="text-center py-16 text-gray-400 text-[0.95rem]">—— 暂无文章 QAQ ——</div>
-      <div v-else class="flex flex-col">
-        <ArticleCard
-          v-for="a in paged" :key="a.id" :article="a" :selectedTags="selectedTags" :hoveredTag="hoveredTag"
-          @click="(a) => $router.push('/articles/' + a.id)"
-          @selectTag="selectTag"
-          @hoverTag="(name) => { hoveredTag = name }"
-        />
+      <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-auto pt-6">
+        <button :disabled="page <= 1" @click="page--" class="px-4 py-1.5 border border-gray-200 bg-white rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors duration-150">上一页</button>
+        <span>{{ page }} / {{ totalPages }}</span>
+        <button :disabled="page >= totalPages" @click="page++" class="px-4 py-1.5 border border-gray-200 bg-white rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors duration-150">下一页</button>
       </div>
-    </div>
-
-    <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-6">
-      <button :disabled="page <= 1" @click="page--" class="px-4 py-1.5 border border-gray-200 bg-white rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors duration-150">上一页</button>
-      <span>{{ page }} / {{ totalPages }}</span>
-      <button :disabled="page >= totalPages" @click="page++" class="px-4 py-1.5 border border-gray-200 bg-white rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors duration-150">下一页</button>
     </div>
   </div>
 </template>
