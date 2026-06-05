@@ -1,50 +1,76 @@
 <template>
   <nav class="flex justify-between items-center px-6 h-[52px] bg-white border-b border-gray-100 sticky top-0 z-[100] font-sans">
-    <div class="flex items-center gap-4 separator-gap">
-      <router-link to="/" class="font-bold text-lg no-underline" :style="{ color: settings.primary }">Sleep Blog</router-link>
+    <ul class="flex items-center gap-4 list-none m-0 p-0 separator-gap">
+      <li>
+        <router-link to="/" class="font-bold text-lg no-underline" :style="{ color: settings.primary }">Sleep Blog</router-link>
+      </li>
 
-      <router-link to="/articles" class="nav-link" active-class="nav-active">
-        <FileText :size="15" /> 看文章
-      </router-link>
+      <li>
+        <router-link to="/articles" class="nav-link" active-class="nav-active">
+          <FileText :size="15" /> 看文章
+        </router-link>
+      </li>
 
-      <span v-if="articleTitle" class="font-mono inline-flex items-center no-underline text-sm px-3 py-1 rounded-md text-white max-w-[300px] overflow-hidden text-ellipsis whitespace-nowrap -ml-2" :style="{ background: settings.primary }">{{ articleTitle }}</span>
+      <li v-if="articleTitle">
+        <span class="font-mono inline-flex items-center no-underline text-sm px-3 py-1 rounded-md text-white max-w-[300px] overflow-hidden text-ellipsis whitespace-nowrap -ml-2" :style="{ background: settings.primary }">{{ articleTitle }}</span>
+      </li>
 
-      <router-link v-if="auth.isLoggedIn && auth.isAdmin" to="/write" class="nav-link" active-class="nav-active">
-        <Pencil :size="15" /> 写文章
-      </router-link>
-      <span v-else class="nav-link text-gray-300 cursor-not-allowed relative group/tooltip">
-        <Pencil :size="15" /> 写文章
-        <span class="hidden group-hover/tooltip:block absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-gray-800 text-white px-3 py-1.5 rounded-md text-xs whitespace-nowrap z-[300] pointer-events-none after:content-[''] after:absolute after:bottom-full after:left-1/2 after:-translate-x-1/2 after:border-[6px] after:border-transparent after:border-b-gray-800">只有管理员才能写文章<br>如想发表文章请联系我</span>
-      </span>
+      <li v-if="auth.isLoggedIn && auth.isAdmin">
+        <router-link to="/write" class="nav-link" active-class="nav-active">
+          <Pencil :size="15" /> 写文章
+        </router-link>
+      </li>
+      <li v-else>
+        <span class="nav-link nav-disabled cursor-not-allowed relative group/tooltip">
+          <Pencil :size="15" /> 写文章
+          <span class="hidden group-hover/tooltip:block absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-gray-800 text-white px-3 py-1.5 rounded-md text-xs whitespace-nowrap z-[300] pointer-events-none after:content-[''] after:absolute after:bottom-full after:left-1/2 after:-translate-x-1/2 after:border-[6px] after:border-transparent after:border-b-gray-800">只有管理员才能写文章<br>如想发表文章请联系我</span>
+        </span>
+      </li>
 
-      <span class="nav-link text-gray-300 cursor-not-allowed relative group/tooltip">
-        <Newspaper :size="15" /> 读新闻
-        <span class="hidden group-hover/tooltip:block absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-gray-800 text-white px-3 py-1.5 rounded-md text-xs whitespace-nowrap z-[300] pointer-events-none after:content-[''] after:absolute after:bottom-full after:left-1/2 after:-translate-x-1/2 after:border-[6px] after:border-transparent after:border-b-gray-800">coming soon</span>
-      </span>
+      <li>
+        <span class="nav-link nav-disabled cursor-not-allowed relative group/tooltip">
+          <Newspaper :size="15" /> 读新闻
+          <span class="hidden group-hover/tooltip:block absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-gray-800 text-white px-3 py-1.5 rounded-md text-xs whitespace-nowrap z-[300] pointer-events-none after:content-[''] after:absolute after:bottom-full after:left-1/2 after:-translate-x-1/2 after:border-[6px] after:border-transparent after:border-b-gray-800">coming soon</span>
+        </span>
+      </li>
 
-      <router-link to="/files" class="nav-link" active-class="nav-active">
-        <Download :size="15" /> 下资料
-      </router-link>
+      <li>
+        <router-link to="/files" class="nav-link" active-class="nav-active">
+          <Download :size="15" /> 下资料
+        </router-link>
+      </li>
 
-      <router-link to="/about" class="nav-link" active-class="nav-active">
-        <User :size="15" /> 关于我
-      </router-link>
-    </div>
+      <li>
+        <router-link to="/about" class="nav-link" active-class="nav-active">
+          <User :size="15" /> 关于我
+        </router-link>
+      </li>
+    </ul>
 
-    <div class="flex items-center gap-4 separator-gap">
-      <button @click="openSettings" class="nav-link font-sans bg-transparent border-none cursor-pointer" :style="{ color: settings.primary }" title="样式设置">
-        <Palette :size="15" /> 样式
-      </button>
+    <ul class="flex items-center gap-4 list-none m-0 p-0 separator-gap">
+      <li>
+        <button @click="openSettings" class="nav-link font-sans bg-transparent border-none cursor-pointer" :style="{ color: settings.primary }" title="样式设置">
+          <Palette :size="15" /> 样式
+        </button>
+      </li>
 
       <template v-if="auth.isLoggedIn">
-        <router-link to="/profile" class="nav-link" active-class="nav-active">{{ auth.user?.username }}</router-link>
-        <button @click="auth.logout" class="nav-btn">退出</button>
+        <li>
+          <router-link to="/profile" class="nav-link" active-class="nav-active">{{ auth.user?.username }}</router-link>
+        </li>
+        <li>
+          <button @click="auth.logout" class="nav-btn">退出</button>
+        </li>
       </template>
       <template v-else>
-        <router-link to="/login" class="nav-link">登录</router-link>
-        <router-link to="/register" class="nav-link">注册</router-link>
+        <li>
+          <router-link to="/login" class="nav-link">登录</router-link>
+        </li>
+        <li>
+          <router-link to="/register" class="nav-link">注册</router-link>
+        </li>
       </template>
-    </div>
+    </ul>
   </nav>
 
   <!-- Settings backdrop -->
