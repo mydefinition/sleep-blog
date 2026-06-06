@@ -1,7 +1,7 @@
 package top.gosleep.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import top.gosleep.blog.entity.FileStorage;
+import top.gosleep.blog.bean.entity.FileStorage;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

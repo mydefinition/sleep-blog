@@ -1,10 +1,12 @@
 package top.gosleep.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import top.gosleep.blog.converter.TagConverter;
-import top.gosleep.blog.dto.TagDto;
-import top.gosleep.blog.entity.ArticleTag;
-import top.gosleep.blog.entity.Tag;
+import top.gosleep.blog.bean.entity.ArticleTag;
+import top.gosleep.blog.bean.vo.TagVO;
+import top.gosleep.blog.bean.entity.Tag;
+import top.gosleep.blog.event.ArticleChangedEvent;
+import top.gosleep.blog.event.ChangeType;
+import top.gosleep.blog.mapper.ArticleMapper;
 import top.gosleep.blog.mapper.ArticleTagMapper;
 import top.gosleep.blog.mapper.TagMapper;
 import top.gosleep.blog.service.TagService;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,34 +28,41 @@ public class TagServiceImpl implements TagService {
         this.articleTagMapper = articleTagMapper;
     }
 
-    public List<TagDto> list() {
+    public List<TagVO> list() {
         return tagMapper.selectList(null).stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+                .map(TagVO::fromEntity)
+                .toList();
     }
 
-    public List<TagDto> getByArticleId(Long articleId) {
-        List<Long> tagIds = articleTagMapper.selectList(
-                new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getArticleId, articleId)
-        ).stream().map(ArticleTag::getTagId).toList();
-        if (tagIds.isEmpty()) return List.of();
-        return tagMapper.selectBatchIds(tagIds).stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    @Override
+    public List<TagVO> getByArticleId(Long articleId) {
+        return tagMapper.getByArticleId(articleId).stream().map(TagVO::fromEntity).toList();
+    }
+
+    public Map<Long, String> map() {
+        return tagMapper.selectList(null)
+                .stream()
+                .collect(Collectors.toMap(Tag::getId, Tag::getName));
     }
 
     @Transactional
-    public TagDto create(String name) {
-        Tag tag = tagMapper.selectOne(
-                new LambdaQueryWrapper<Tag>().eq(Tag::getName, name));
-        if (tag != null) return toDto(tag);
+    public Tag create(String name) {
+        Tag tag = tagMapper.selectOne(new LambdaQueryWrapper<Tag>().eq(Tag::getName, name));
+        if (tag != null) return tag;
         tag = new Tag();
         tag.setName(name);
         tagMapper.insert(tag);
-        return toDto(tag);
+        return tag;
     }
 
-    private TagDto toDto(Tag tag) {
-        return TagConverter.toDto(tag);
+    public void saveTags(Long articleId, List<Long> tagIds) {
+        if (tagIds != null) {
+            for (Long tagId : tagIds) {
+                ArticleTag at = new ArticleTag();
+                at.setArticleId(articleId);
+                at.setTagId(tagId);
+                articleTagMapper.insert(at);
+            }
+        }
     }
 }

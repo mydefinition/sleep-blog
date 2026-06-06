@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import top.gosleep.blog.common.BusinessException;
 import top.gosleep.blog.common.ResultCode;
 import top.gosleep.blog.context.UserContext;
-import top.gosleep.blog.converter.UserConverter;
-import top.gosleep.blog.dto.UserDto;
-import top.gosleep.blog.dto.request.LoginRequest;
-import top.gosleep.blog.dto.request.RegisterRequest;
-import top.gosleep.blog.entity.User;
+import top.gosleep.blog.bean.dto.UserDto;
+import top.gosleep.blog.bean.dto.request.LoginRequest;
+import top.gosleep.blog.bean.dto.request.RegisterRequest;
+import top.gosleep.blog.bean.entity.User;
 import top.gosleep.blog.mapper.UserMapper;
 import top.gosleep.blog.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setRole(User.DEFAULT_ROLE);
         userMapper.insert(user);
-        UserContext.setCurrentUser(UserConverter.toDto(user));
+        UserContext.setCurrentUser(UserDto.fromEntity(user));
     }
 
     public void login(LoginRequest req) {
@@ -42,11 +41,11 @@ public class UserServiceImpl implements UserService {
         if (user == null || !passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new BusinessException(ResultCode.BAD_REQUEST, "用户名或密码错误");
         }
-        UserContext.setCurrentUser(UserConverter.toDto(user));
+        UserContext.setCurrentUser(UserDto.fromEntity(user));
     }
 
     public UserDto getProfile(Long userId) {
-        return UserConverter.toDto(userMapper.selectById(userId));
+        return UserDto.fromEntity(userMapper.selectById(userId));
     }
 
     public void updateProfile(Long userId, RegisterRequest req) {

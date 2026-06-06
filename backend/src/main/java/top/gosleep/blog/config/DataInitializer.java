@@ -1,7 +1,7 @@
 package top.gosleep.blog.config;
 
-import top.gosleep.blog.entity.User;
-import top.gosleep.blog.entity.User.Role;
+import top.gosleep.blog.bean.entity.User;
+import top.gosleep.blog.bean.entity.User.Role;
 import top.gosleep.blog.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

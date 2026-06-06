@@ -22,12 +22,10 @@ public class GlobalExceptionHandler {
         return Result.error(ResultCode.FORBIDDEN, e.getMessage());
     }
 
-
-
     /** 其他未捕获异常处理 */
     @ExceptionHandler(Exception.class)
     public Result<?> handleException(Exception e) {
-        log.error("系统异常", e);
-        return Result.error(e.getMessage());
+        log.error("系统内部错误", e);
+        return Result.error(ResultCode.BUSINESS_ERROR, "系统内部错误");
     }
 }

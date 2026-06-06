@@ -1,4 +1,4 @@
-package top.gosleep.blog.dto;
+package top.gosleep.blog.bean.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;

@@ -1,8 +1,10 @@
 package top.gosleep.blog.context;
 
-import top.gosleep.blog.dto.UserDto;
-import top.gosleep.blog.entity.User;
+import top.gosleep.blog.bean.dto.UserDto;
+import top.gosleep.blog.bean.entity.User;
 import org.springframework.security.access.AccessDeniedException;
+import top.gosleep.blog.common.BusinessException;
+import top.gosleep.blog.common.ResultCode;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,8 +28,9 @@ public class UserContext {
     }
 
     public static void requireAdmin() {
-        if (getCurrentUser().getRole() != User.Role.ADMIN) {
-            throw new AccessDeniedException("需要管理员权限");
+        UserDto user = getCurrentUser();
+        if (user == null || user.getRole() != User.Role.ADMIN) {
+            throw new BusinessException(ResultCode.FORBIDDEN, "需要管理员权限");
         }
     }
 

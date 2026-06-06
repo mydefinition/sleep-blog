@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Article } from '@/types'
+import {Article} from '@/types'
 import { Calendar, User, Tag } from 'lucide-vue-next'
 
 defineProps<{ article: Article; selectedTags: number[]; hoveredTag: string }>()

@@ -1,7 +1,7 @@
 package top.gosleep.blog.controller;
 
 import top.gosleep.blog.common.Result;
-import top.gosleep.blog.dto.HomeDto;
+import top.gosleep.blog.bean.dto.HomeDto;
 import top.gosleep.blog.service.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

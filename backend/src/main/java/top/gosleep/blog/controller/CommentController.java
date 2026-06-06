@@ -2,7 +2,7 @@ package top.gosleep.blog.controller;
 
 import top.gosleep.blog.common.Result;
 import top.gosleep.blog.context.UserContext;
-import top.gosleep.blog.dto.CommentDto;
+import top.gosleep.blog.bean.dto.CommentDto;
 import top.gosleep.blog.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

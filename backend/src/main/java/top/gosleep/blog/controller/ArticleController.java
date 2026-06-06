@@ -2,11 +2,8 @@ package top.gosleep.blog.controller;
 
 import top.gosleep.blog.common.Result;
 import top.gosleep.blog.context.UserContext;
-import top.gosleep.blog.dto.ArticleDto;
-import top.gosleep.blog.dto.ArticleListDto;
-import top.gosleep.blog.dto.request.ArticleRequest;
+import top.gosleep.blog.bean.dto.request.ArticleRequest;
 import top.gosleep.blog.service.ArticleService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -21,21 +18,17 @@ public class ArticleController {
     public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
     }
-
-    @GetMapping
-    @Operation(summary = "获取文章列表")
-    public Result<?> list(@RequestParam(required = false) String tagIds,
-                          @RequestParam(defaultValue = "1") int page,
-                          @RequestParam(defaultValue = "10") int size) {
-        IPage<ArticleListDto> result = articleService.list(tagIds, page, size);
-        return Result.ok(result);
+    
+    @GetMapping("/checklist")
+    @Operation(summary = "检查文章列表更新")
+    public Result<?> checkList(@RequestParam(defaultValue = "0") long token) {
+        return Result.ok(articleService.checkList(token));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "获取文章详情")
     public Result<?> getById(@PathVariable Long id) {
-        ArticleDto article = articleService.getById(id);
-        return Result.ok(article);
+        return Result.ok(articleService.getById(id));
     }
 
     @PostMapping

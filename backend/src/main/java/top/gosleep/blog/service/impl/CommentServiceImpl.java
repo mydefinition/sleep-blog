@@ -1,12 +1,12 @@
 package top.gosleep.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import top.gosleep.blog.dto.CommentDto;
+import top.gosleep.blog.bean.dto.CommentDto;
 import top.gosleep.blog.common.BusinessException;
 import top.gosleep.blog.common.ResultCode;
-import top.gosleep.blog.entity.Article;
-import top.gosleep.blog.entity.Comment;
-import top.gosleep.blog.entity.User;
+import top.gosleep.blog.bean.entity.Article;
+import top.gosleep.blog.bean.entity.Comment;
+import top.gosleep.blog.bean.entity.User;
 import top.gosleep.blog.mapper.ArticleMapper;
 import top.gosleep.blog.mapper.CommentMapper;
 import top.gosleep.blog.mapper.UserMapper;

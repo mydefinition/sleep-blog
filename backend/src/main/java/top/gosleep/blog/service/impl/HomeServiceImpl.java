@@ -1,6 +1,6 @@
 package top.gosleep.blog.service.impl;
 
-import top.gosleep.blog.dto.HomeDto;
+import top.gosleep.blog.bean.dto.HomeDto;
 import top.gosleep.blog.service.HomeService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.ClassPathResource;

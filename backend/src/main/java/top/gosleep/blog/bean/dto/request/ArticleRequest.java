@@ -1,4 +1,4 @@
-package top.gosleep.blog.dto.request;
+package top.gosleep.blog.bean.dto.request;
 
 import lombok.Data;
 import java.util.List;
@@ -12,4 +12,5 @@ public class ArticleRequest {
     private String content;
     private String summary;
     private List<Long> tagIds;
+    private List<String> tagNames;
 }

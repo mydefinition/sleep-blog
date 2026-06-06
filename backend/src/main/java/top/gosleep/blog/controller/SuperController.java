@@ -1,15 +1,15 @@
 package top.gosleep.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import top.gosleep.blog.bean.dto.UserDto;
 import top.gosleep.blog.common.BusinessException;
 import top.gosleep.blog.common.Result;
 import top.gosleep.blog.common.ResultCode;
 import top.gosleep.blog.context.UserContext;
-import top.gosleep.blog.converter.UserConverter;
-import top.gosleep.blog.dto.request.IdRequest;
-import top.gosleep.blog.dto.request.ResetPasswordRequest;
-import top.gosleep.blog.entity.User;
-import top.gosleep.blog.entity.User.Role;
+import top.gosleep.blog.bean.dto.request.IdRequest;
+import top.gosleep.blog.bean.dto.request.ResetPasswordRequest;
+import top.gosleep.blog.bean.entity.User;
+import top.gosleep.blog.bean.entity.User.Role;
 import top.gosleep.blog.mapper.UserMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,7 +75,7 @@ public class SuperController {
         if (user == null) throw new BusinessException(ResultCode.NOT_FOUND, "用户不存在");
         user.setRole(Role.ADMIN);
         userMapper.updateById(user);
-        UserContext.setCurrentUser(UserConverter.toDto(user));
+        UserContext.setCurrentUser(UserDto.fromEntity(user));
         return Result.ok();
     }
 
@@ -88,7 +88,7 @@ public class SuperController {
         if (user == null) throw new BusinessException(ResultCode.NOT_FOUND, "用户不存在");
         user.setRole(Role.USER);
         userMapper.updateById(user);
-        UserContext.setCurrentUser(UserConverter.toDto(user));
+        UserContext.setCurrentUser(UserDto.fromEntity(user));
         return Result.ok();
     }
 

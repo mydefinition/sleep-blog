@@ -1,6 +1,6 @@
 package top.gosleep.blog.service;
 
-import top.gosleep.blog.dto.CommentDto;
+import top.gosleep.blog.bean.dto.CommentDto;
 import java.util.List;
 
 public interface CommentService {

@@ -1,78 +1,115 @@
 package top.gosleep.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.Getter;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import top.gosleep.blog.bean.dto.ArticleItemDTO;
+import top.gosleep.blog.bean.entity.Article;
+import top.gosleep.blog.bean.entity.ArticleTag;
+import top.gosleep.blog.bean.dto.request.ArticleRequest;
+import top.gosleep.blog.bean.entity.Tag;
+import top.gosleep.blog.bean.vo.ArticleDetailVO;
+import top.gosleep.blog.bean.vo.ArticleItemVO;
+import top.gosleep.blog.bean.vo.ArticleListCheckVO;
+import top.gosleep.blog.bean.vo.TagVO;
 import top.gosleep.blog.common.BusinessException;
 import top.gosleep.blog.common.ResultCode;
-import top.gosleep.blog.dto.ArticleDto;
-import top.gosleep.blog.dto.ArticleListDto;
-import top.gosleep.blog.dto.request.ArticleRequest;
-import top.gosleep.blog.entity.Article;
-import top.gosleep.blog.entity.ArticleTag;
-import top.gosleep.blog.entity.User;
+import top.gosleep.blog.event.ArticleChangedEvent;
+import top.gosleep.blog.event.ChangeType;
 import top.gosleep.blog.mapper.ArticleMapper;
 import top.gosleep.blog.mapper.ArticleTagMapper;
 import top.gosleep.blog.mapper.UserMapper;
 import top.gosleep.blog.service.ArticleService;
 import top.gosleep.blog.service.TagService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
-
     private final ArticleMapper articleMapper;
     private final ArticleTagMapper articleTagMapper;
     private final TagService tagService;
     private final UserMapper userMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ArticleServiceImpl(ArticleMapper articleMapper, ArticleTagMapper articleTagMapper,
-                              TagService tagService, UserMapper userMapper) {
+    public ArticleServiceImpl(ArticleMapper articleMapper, ArticleTagMapper articleTagMapper, TagService tagService,
+                              UserMapper userMapper, ApplicationEventPublisher eventPublisher) {
         this.articleMapper = articleMapper;
         this.articleTagMapper = articleTagMapper;
         this.tagService = tagService;
         this.userMapper = userMapper;
+        this.eventPublisher = eventPublisher;
+
+        handleArticleChanged(null);
+        updateAll();
     }
 
-    public IPage<ArticleListDto> list(String tagIdsStr, int pageNum, int pageSize) {
-        Page<Article> page = new Page<>(pageNum, pageSize);
-        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<Article>()
-                .select(Article::getId, Article::getTitle, Article::getSummary,
-                        Article::getAuthorId, Article::getCreatedAt, Article::getUpdatedAt)
-                .orderByDesc(Article::getCreatedAt);
+    /** 用于前端文章列表页面展示的缓冲 */
 
-        if (tagIdsStr != null && !tagIdsStr.isBlank()) {
-            String[] parts = tagIdsStr.split(",");
-            List<Long> tagIds = new java.util.ArrayList<>();
-            for (String p : parts) {
-                try { tagIds.add(Long.parseLong(p.trim())); } catch (NumberFormatException ignored) {}
-            }
-            if (!tagIds.isEmpty()) {
-                List<Long> articleIds = articleTagMapper.selectList(
-                        new LambdaQueryWrapper<ArticleTag>().in(ArticleTag::getTagId, tagIds)
-                ).stream().map(ArticleTag::getArticleId).distinct().toList();
-                if (articleIds.isEmpty()) return page.convert(this::toListDto);
-                wrapper.in(Article::getId, articleIds);
-            }
-        }
+    @Getter
+    private long cacheToken;
+    private boolean isCacheDirty;
+    private ArticleListCheckVO articleListCache;
 
-        articleMapper.selectPage(page, wrapper);
-        return page.convert(this::toListDto);
+    /** 更新缓存（全量刷新） */
+    private synchronized void updateAll() {
+        List<ArticleItemDTO> items = articleMapper.selectArticleListWithAuthor();
+        Map<Long, String> tagMap = tagService.map();
+        Map<Long, List<ArticleTag>> tagGroup = articleTagMapper.selectList(null).stream().collect(
+                Collectors.groupingBy(ArticleTag::getArticleId));
+        articleListCache = new ArticleListCheckVO(
+                cacheToken,
+                items.stream().map(article -> {
+                    ArticleItemVO vo = ArticleItemVO.fromDTO(article);
+                    vo.setTags(tagGroup.getOrDefault(vo.getId(), Collections.emptyList())
+                            .stream()
+                            .map(at -> new TagVO(at.getTagId(), tagMap.get(at.getTagId())))
+                            .toList());
+                    return vo;
+                }).toList(),
+                tagService.list()
+        );
+        isCacheDirty = false;
     }
 
-    public ArticleDto getById(Long id) {
+    public ArticleListCheckVO getAll() {
+        if (isCacheDirty) updateAll();
+        return articleListCache;
+    }
+
+    @EventListener
+    protected void handleArticleChanged(ArticleChangedEvent event) {
+        cacheToken = System.currentTimeMillis();
+        isCacheDirty = true;
+    }
+
+    public ArticleListCheckVO list() {
+        return getAll();
+    }
+
+    public ArticleListCheckVO checkList(long token) {
+        return token == cacheToken ? new ArticleListCheckVO(token, null, null) : list();
+    }
+
+    public ArticleDetailVO getById(Long id) {
         Article article = articleMapper.selectById(id);
-        if (article == null) {
-            throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
-        }
-        return toDto(article);
+        if (article == null) throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
+        ArticleDetailVO vo = ArticleDetailVO.fromEntity(article);
+        vo.setAuthorName(userMapper.selectById(article.getAuthorId()).getUsername());
+        vo.setTags(tagService.getByArticleId(id));
+        return vo;
     }
 
     @Transactional
     public void create(Long authorId, ArticleRequest req) {
+        List<Long> tagIds = req.getTagIds() == null ? new ArrayList<>() : req.getTagIds();
+        if (req.getTagNames() != null)
+            for (String name : req.getTagNames())
+                tagIds.add(tagService.create(name).getId());
         Article article = new Article();
         article.setTitle(req.getTitle());
         article.setContent(req.getContent());
@@ -80,39 +117,35 @@ public class ArticleServiceImpl implements ArticleService {
                 ? req.getSummary() : extractSummary(req.getContent()));
         article.setAuthorId(authorId);
         articleMapper.insert(article);
-        saveTags(article.getId(), req.getTagIds());
+        tagService.saveTags(article.getId(), tagIds);
+        eventPublisher.publishEvent(new ArticleChangedEvent(ChangeType.CREATE, article.getId()));
     }
 
     @Transactional
     public void update(Long id, ArticleRequest req) {
+        List<String> tagNames = req.getTagNames() == null ? Collections.emptyList() : req.getTagNames();
+        List<Long> tagIds = req.getTagIds() == null ? new ArrayList<>() : req.getTagIds();
+        for (String name : tagNames)
+            req.getTagIds().add(tagService.create(name).getId());
         Article article = articleMapper.selectById(id);
-        if (article == null) {
-            throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
-        }
+        if (article == null) throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
         article.setTitle(req.getTitle());
         article.setContent(req.getContent());
         article.setSummary(req.getSummary() != null
                 ? req.getSummary() : extractSummary(req.getContent()));
         articleMapper.updateById(article);
-
         articleTagMapper.delete(
                 new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getArticleId, id));
-        saveTags(id, req.getTagIds());
+        tagService.saveTags(id, tagIds);
+        eventPublisher.publishEvent(new ArticleChangedEvent(ChangeType.UPDATE, article.getId()));
     }
 
     @Transactional
     public void delete(Long id) {
-        articleMapper.deleteById(id);
-    }
-
-    private void saveTags(Long articleId, List<Long> tagIds) {
-        if (tagIds != null) {
-            for (Long tagId : tagIds) {
-                ArticleTag at = new ArticleTag();
-                at.setArticleId(articleId);
-                at.setTagId(tagId);
-                articleTagMapper.insert(at);
-            }
+        if (articleMapper.deleteById(id) != 0) {
+            eventPublisher.publishEvent(new ArticleChangedEvent(ChangeType.DELETE, id));
+        } else {
+            throw new BusinessException(ResultCode.NOT_FOUND, "文章不存在");
         }
     }
 
@@ -127,37 +160,5 @@ public class ArticleServiceImpl implements ArticleService {
                 .replaceAll("\\s+", " ")
                 .trim();
         return plain.length() > 200 ? plain.substring(0, 200) + "..." : plain;
-    }
-
-    private ArticleListDto toListDto(Article article) {
-        ArticleListDto dto = new ArticleListDto();
-        dto.setId(article.getId());
-        dto.setTitle(article.getTitle());
-        dto.setSummary(article.getSummary());
-        dto.setAuthorId(article.getAuthorId());
-        dto.setAuthorName(getAuthorName(article.getAuthorId()));
-        dto.setTags(tagService.getByArticleId(article.getId()));
-        dto.setCreatedAt(article.getCreatedAt());
-        dto.setUpdatedAt(article.getUpdatedAt());
-        return dto;
-    }
-
-    private ArticleDto toDto(Article article) {
-        ArticleDto dto = new ArticleDto();
-        dto.setId(article.getId());
-        dto.setTitle(article.getTitle());
-        dto.setContent(article.getContent());
-        dto.setSummary(article.getSummary());
-        dto.setAuthorId(article.getAuthorId());
-        dto.setAuthorName(getAuthorName(article.getAuthorId()));
-        dto.setTags(tagService.getByArticleId(article.getId()));
-        dto.setCreatedAt(article.getCreatedAt());
-        dto.setUpdatedAt(article.getUpdatedAt());
-        return dto;
-    }
-
-    private String getAuthorName(Long authorId) {
-        User user = userMapper.selectById(authorId);
-        return user != null ? user.getUsername() : "未知";
     }
 }

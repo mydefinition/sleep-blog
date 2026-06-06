@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.gosleep.blog.mapper.TagMapper">
+<!-- 查询文章列表及作者信息 -->
+<resultMap id="TagMap" type="top.gosleep.blog.bean.entity.Tag">
+    <id column="id" property="id"/>
+</resultMap>
+
+    <select id="getByArticleId" resultMap="TagMap">
+        SELECT t.id, t.name
+        FROM article_tag at
+            INNER JOIN tag t
+                ON at.tag_id = t.id
+        WHERE at.article_id = #{articleId}
+    </select>
+</mapper>

@@ -1,4 +1,4 @@
-package top.gosleep.blog.entity;
+package top.gosleep.blog.bean.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

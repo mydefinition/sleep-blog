@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.gosleep.blog.mapper.ArticleMapper">
+    <!-- 查询文章列表及作者信息 -->
+    <resultMap id="ArticleListItemMap" type="top.gosleep.blog.bean.dto.ArticleItemDTO">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="summary" property="summary"/>
+        <result column="author_id" property="authorId"/>
+        <result column="author_name" property="authorName"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <select id="selectArticleListWithAuthor" resultMap="ArticleListItemMap">
+        SELECT a.id, a.title, a.summary, a.author_id, a.updated_at, a.created_at, u.username as author_name
+        FROM article a
+            INNER JOIN user u
+                ON a.author_id = u.id
+        WHERE a.is_deleted = 0
+    </select>
+</mapper>
