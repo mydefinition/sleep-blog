@@ -48,11 +48,6 @@ CREATE TABLE IF NOT EXISTS comment (
     created_at  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS article_image(
-    article_id  INTEGER     NOT NULL REFERENCES article(id),
-    file_id     INTEGER     NOT NULL REFERENCES file_storage(id)
-);
-
 CREATE TABLE IF NOT EXISTS file_storage (
     id              INTEGER         PRIMARY KEY AUTOINCREMENT,
     mine_type       VARCHAR(30)     NOT NULL,

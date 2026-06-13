@@ -2,7 +2,7 @@
 set -e
 
 APP_DIR="$(cd "$(dirname "$0")" && pwd)"
-JAR_NAME="sample-blog-1.0.0.jar"
+JAR_NAME="sleep-blog-1.0.0.jar"
 JAVA_OPTS="-Xmx256m -Xms128m"
 
 cd "$APP_DIR"
