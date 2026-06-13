@@ -10,11 +10,8 @@ import java.time.LocalDateTime;
 public class FileStorage {
     @TableId(type = IdType.AUTO)
     private Long id;
+    private String mineType;
     private String name;
-    private Boolean isDir;
     private Long size;
-    private Long localId;
-    private String hash;
-    private Long userId;
-    private LocalDateTime uploadAt;
+    private LocalDateTime createdAt;
 }

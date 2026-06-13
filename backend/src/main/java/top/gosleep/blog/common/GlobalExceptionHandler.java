@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -27,5 +28,11 @@ public class GlobalExceptionHandler {
     public Result<?> handleException(Exception e) {
         log.error("系统内部错误", e);
         return Result.error(ResultCode.BUSINESS_ERROR, "系统内部错误");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public Result<?> handleNoResource(NoResourceFoundException e) {
+        // API 请求被静态资源 handler 误拦截，返回标准 404
+        return Result.error(ResultCode.NOT_FOUND);
     }
 }

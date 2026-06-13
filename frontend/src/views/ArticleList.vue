@@ -1,127 +1,131 @@
 <template>
   <div class="max-w-[1200px] mx-auto px-4 py-8 flex gap-8 items-start">
-    <aside v-if="tags.length " class="w-[240px] shrink-0 sticky top-[68px] border-r border-gray-100 pr-4">
-      <h3 class="text-[0.9rem] text-gray-800 m-0 mb-2.5 flex justify-between items-center">标签列表
+    <aside class="w-[220px] shrink-0 sticky top-[68px] border-r border-gray-100 pr-4">
+      <h3 class="text-[1rem] text-gray-800 m-0 mb-3 font-semibold">
+        分类 <span class="text-[0.8rem] font-normal" :style="{ color: settings.primary }">CATEGORY</span>
+      </h3>
+      <div class="flex items-center cursor-pointer select-none py-0.5" @click="onCategorySelect(0)">
+        <span
+            class="truncate inline-block px-3 py-[3px] rounded-full border border-transparent text-[0.88rem] transition-colors duration-150"
+            :class="categoryId === 0 ? 'pill-solid font-semibold' : 'pill-ghost'"
+        >全部</span>
+      </div>
+      <div v-if="categoryTree.length === 0" class="text-[0.82rem] text-gray-400 pl-3">暂无分类</div>
+      <CategoryTree
+          v-for="node in categoryTree" :key="node.id"
+          :node="node" :selectedId="categoryId" :depth="0"
+          @select="onCategorySelect"
+      />
+    </aside>
+
+    <div class="flex-1 min-w-0 flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="m-0 font-semibold text-[1.2rem]">
+          文章列表 <span class="text-[1rem] font-normal" :style="{ color: settings.primary }">ARTICLES</span>
+        </h2>
+        <span class="inline-flex items-center gap-1 text-gray-300 opacity-35 cursor-not-allowed relative group/tooltip">
+          <input disabled placeholder="全文搜索 coming soon..."
+                 class="px-3 py-1.5 border-0 border-b-2 border-gray-100 text-[0.9rem] outline-none w-[200px] text-gray-800 font-sans bg-transparent placeholder:text-gray-300 cursor-not-allowed" />
+          <Search :size="14" class="shrink-0" />
+          <span class="hidden group-hover/tooltip:block absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-gray-700 text-white px-3 py-1.5 rounded-md text-xs whitespace-nowrap z-[300] pointer-events-none after:content-[''] after:absolute after:bottom-full after:left-1/2 after:-translate-x-1/2 after:border-[6px] after:border-transparent after:border-b-gray-700">全文搜索功能开发中，敬请期待</span>
+        </span>
+      </div>
+
+      <div v-if="loading" class="flex justify-center items-center min-h-[40vh]">
+        <span class="inline-block w-8 h-8 border-[3px] border-gray-200 rounded-full animate-spin border-t-primary"></span>
+      </div>
+      <div v-else-if="errorMsg" class="text-[#ff5252] text-center py-8">{{ errorMsg }}</div>
+      <div v-else-if="articles.length === 0" class="text-center py-16 text-gray-400 text-[0.95rem]">
+        —— 暂无文章 QAQ ——
+      </div>
+      <div v-else>
+        <ArticleCard
+            v-for="a in articles" :key="a.id" :article="a"
+            :selectedTags="selectedTags" :hoveredTag="hoveredTag"
+            @click="(a) => $router.push('/articles/' + a.id)"
+            @selectTag="selectTag"
+            @hoverTag="(name) => { hoveredTag = name }"
+        />
+      </div>
+
+      <PaginationBar :page="page" :totalPages="totalPages" @update:page="page = $event" />
+    </div>
+
+    <aside class="w-[200px] shrink-0 sticky top-[68px] border-l border-gray-100 pl-4">
+      <h3 class="text-[1rem] text-gray-800 m-0 mb-2.5 font-semibold flex justify-between items-center">
+        <span>
+          标签 <span class="text-[0.8rem] font-normal" :style="{ color: settings.primary }">TAGS</span>
+        </span>
         <span class="inline-flex gap-1.5 items-center">
           <button class="mode-btn" :class="{ active: andMode && selectedTags.length }" :disabled="!selectedTags.length"
-                  @click="andMode = true">&amp;&amp;</button>
+                  @click="andMode = true">&&</button>
           <button class="mode-btn" :class="{ active: !andMode && selectedTags.length }" :disabled="!selectedTags.length"
                   @click="andMode = false">||</button>
         </span>
       </h3>
-      <div class="flex flex-wrap gap-1.5">
-        <span
-            v-for="t in tags" :key="t.id"
-            class="inline-flex items-center gap-[3px] px-2.5 py-1 border border-transparent rounded-full cursor-pointer text-[0.82rem] text-gray-600  transition-all duration-150"
-            :class="{ '!bg-primary !text-white': selectedTags.includes(t.id), '!text-primary !border-primary': hoveredTag === t.name && !selectedTags.includes(t.id) }"
-            @click="selectTag(t.id)"
-            @mouseenter="hoveredTag = t.name"
-            @mouseleave="hoveredTag = ''"
-        ><Tag :size="14"/> {{ t.name }}</span>
-      </div>
+      <TagFilter
+          :tags="allTags"
+          :hoveredTag="hoveredTag"
+          v-model:selected-tags="selectedTags"
+          @hoverTag="(name) => { hoveredTag = name }"
+      />
     </aside>
-
-    <div class="flex-1 min-w-0 flex flex-col">
-      <div>
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="m-0">文章列表</h2>
-          <span class="inline-flex items-center gap-1 text-gray-300 transition-colors duration-150"
-                :class="{ '!text-primary': search || searchFocused }">
-            <input v-model="search" placeholder="搜索标题..."
-                   class="px-3 py-1.5 border-0 border-b-2 border-gray-100 text-[0.9rem] outline-none w-[200px] text-gray-800 font-sans bg-transparent transition-[border-color] duration-150 placeholder:text-gray-300"
-                   :class="{ '!border-b-primary': search || searchFocused }" @focus="searchFocused = true"
-                   @blur="searchFocused = false"/>
-            <Search :size="14" class="shrink-0"/>
-          </span>
-        </div>
-        <div v-if="loading" class="flex justify-center items-center min-h-[40vh]"><span
-            class="inline-block w-8 h-8 border-[3px] border-gray-200 rounded-full animate-spin border-t-primary"></span>
-        </div>
-        <div v-else-if="errorMsg">{{ errorMsg }}</div>
-        <div v-else-if="paged.length === 0" class="text-center py-16 text-gray-400 text-[0.95rem]">—— 暂无文章 QAQ ——
-        </div>
-        <div v-else>
-          <ArticleCard
-              v-for="a in paged" :key="a.id" :article="a" :selectedTags="selectedTags" :hoveredTag="hoveredTag"
-              @click="(a) => $router.push('/articles/' + a.id)"
-              @selectTag="selectTag"
-              @hoverTag="(name) => { hoveredTag = name }"
-          />
-        </div>
-      </div>
-      <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-auto pt-6">
-        <button :disabled="page <= 1" @click="page--"
-                class="px-4 py-1.5 border border-gray-200 bg-white rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors duration-150">
-          上一页
-        </button>
-        <span>{{ page }} / {{ totalPages }}</span>
-        <button :disabled="page >= totalPages" @click="page++"
-                class="px-4 py-1.5 border border-gray-200 bg-white rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors duration-150">
-          下一页
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, onBeforeUnmount} from 'vue'
-import {api} from '@/api'
-import ArticleCard from '@/components/ArticleCard.vue'
-import {Tag, Search} from 'lucide-vue-next'
-import {Article, Tag as TagType} from '@/types'
+import { ref, computed, watch, onMounted } from 'vue'
+import { api } from '@/api'
+import { useSettingsStore } from '@/stores/settings'
+import { Search } from 'lucide-vue-next'
+import ArticleCard from '@/components/ArticleList/ArticleCard.vue'
+import PaginationBar from '@/components/ArticleList/PaginationBar.vue'
+import TagFilter from '@/components/ArticleList/TagFilter.vue'
+import CategoryTree from '@/components/CategoryTree.vue'
+import type { ArticleSummary, Tag as TagType, CategoryVO } from '@/types'
 
-let cacheToken: number = 0;
-const checkInterval = 5 * 1000
-let timer: ReturnType<typeof setInterval>
-const allArticleItems = ref<Article[]>([]);
-const tags = ref<TagType[]>([])
-const loading = ref(true);
+const articles = ref<ArticleSummary[]>([])
+const allTags = ref<TagType[]>([])
+const categoryTree = ref<CategoryVO[]>([])
+const loading = ref(true)
 const errorMsg = ref('')
-const page = ref(1);
+const page = ref(1)
+const total = ref(0)
 const pageSize = 10
 const selectedTags = ref<number[]>([])
-const hoveredTag = ref('');
-const andMode = ref(false);
-const search = ref('');
-const searchFocused = ref(false)
+const andMode = ref(false)
+const categoryId = ref(0)
+const hoveredTag = ref('')
+const settings = useSettingsStore()
 
-const filtered = computed(() => {
-  let arr = allArticleItems.value
-  if (search.value) arr = arr.filter(a => a.title.includes(search.value))
-  if (!selectedTags.value.length) return arr
-  return arr.filter(a => {
-    const ids = (a.tags || []).map(a => a.id)
-    return andMode.value
-        ? selectedTags.value.every(id => ids.includes(id))
-        : selectedTags.value.some(id => ids.includes(id))
-  })
-})
-
-const totalPages = computed(() => Math.ceil(filtered.value.length / pageSize) || 1)
-const paged = computed(() => {
-  const start = (page.value - 1) * pageSize;
-  return filtered.value.slice(start, start + pageSize)
-})
+const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize)))
 
 function selectTag(id: number) {
-  const idx = selectedTags.value.indexOf(id);
-  idx >= 0 ? selectedTags.value.splice(idx, 1) : selectedTags.value.push(id);
+  const arr = [...selectedTags.value]
+  const i = arr.indexOf(id)
+  i >= 0 ? arr.splice(i, 1) : arr.push(id)
+  selectedTags.value = arr
   page.value = 1
 }
 
-async function fetchAll() {
-  errorMsg.value = '';
+function onCategorySelect(id: number) {
+  categoryId.value = id
+  page.value = 1
+}
+
+async function fetchArticles() {
+  loading.value = true
+  errorMsg.value = ''
   try {
-    const res = await api.get('/api/articles/checklist?token=' + cacheToken.valueOf());
-    const data = res.data
-    if (data.token !== cacheToken) {
-      loading.value = true;
-      console.log(data.token)
-      cacheToken = data.token
-      allArticleItems.value = data.list
-      tags.value = data.tags
-    }
+    const p = new URLSearchParams()
+    p.set('page', String(page.value))
+    p.set('size', String(pageSize))
+    p.set('and', String(andMode.value))
+    p.set('categoryId', String(categoryId.value))
+    selectedTags.value.forEach(id => p.append('tagIds', String(id)))
+    const res = await api.get('/api/query/articles?' + p.toString())
+    articles.value = res.data.items || []
+    total.value = res.data.total || 0
   } catch (e: any) {
     errorMsg.value = e.message || '加载失败'
   } finally {
@@ -129,10 +133,15 @@ async function fetchAll() {
   }
 }
 
-onMounted(() => {
-  fetchAll();
-  timer = setInterval(() => fetchAll(), checkInterval)
-})
+watch([selectedTags, andMode, categoryId, page], () => fetchArticles())
 
-onBeforeUnmount(() => clearInterval(timer))
+onMounted(async () => {
+  const [catRes, tagRes] = await Promise.allSettled([
+    api.get('/api/query/categories'),
+    api.get('/api/query/tags'),
+  ])
+  if (catRes.status === 'fulfilled') categoryTree.value = catRes.value.data?.children || []
+  if (tagRes.status === 'fulfilled') allTags.value = tagRes.value.data || []
+  fetchArticles()
+})
 </script>

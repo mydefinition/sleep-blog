@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class MkdirRequest {
-    private String name;
-    private Long localId = 0L;
+    private String dirName;
+    private Long localId;
 }

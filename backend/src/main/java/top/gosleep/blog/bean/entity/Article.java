@@ -14,10 +14,12 @@ public class Article {
     private String content;
     private String summary;
     private Long authorId;
+    private Integer isPublished;
     @TableLogic
     private Integer isDeleted;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updatedAt;
+    private Long categoryId;
 }

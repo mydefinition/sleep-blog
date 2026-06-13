@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.gosleep.blog.mapper.CloudFileMapper">
+    <select id="queryByParentId" resultType="top.gosleep.blog.bean.vo.CloudFileVO">
+        SELECT
+            cf.id,
+            cf.parent_id as parentId,
+            cf.owner_id as ownerId,
+            u.nickname as userName,
+            cf.name as fileName,
+            cf.is_dir as isDir,
+            cf.created_at as createdAt
+        FROM cloud_file cf
+            LEFT JOIN user u on u.id = cf.owner_id
+        WHERE cf.parent_id = #{parentId}
+    </select>
+</mapper>

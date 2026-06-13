@@ -1,8 +1,10 @@
-node_modules/
+﻿node_modules/
 .nuxt/
 .output/
 dist/
 .data/
+*.jar
+*.war
 
 # Env
 .env
@@ -29,6 +31,12 @@ logs/
 backend/src/main/resources/static/
 release/
 
+# Test / Coverage
+*.lcov
+coverage/
+
 # Uploads
 storage/
 uploads/
+playwright-report/
+test-results/

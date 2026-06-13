@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.gosleep.blog.mapper.ArticleQueryMapper">
+    <select id="queryPageWhitOrTag" resultType="top.gosleep.blog.bean.dto.ArticleSummaryDTO">
+        SELECT
+        art.id,
+        art.title,
+        art.summary,
+        art.author_id as authorId,
+        u.nickname as authorName,
+        art.is_published as isPublished,
+        art.created_at as createdAt,
+        art.category_id as categoryId
+        FROM article art
+        JOIN category c ON art.category_id = c.id
+        JOIN user u ON art.author_id = u.id
+        WHERE
+        art.is_deleted = 0
+        <if test="isPublished != null">
+            AND art.is_published = #{isPublished}
+        </if>
+        <if test="userId != null">
+            AND art.author_id = #{userId}
+        </if>
+        <if test="categoryId != 0">
+            AND (
+            c.id = #{categoryId}
+            OR c.level1_id = #{categoryId}
+            OR c.level2_id = #{categoryId}
+            )
+        </if>
+        <if test="tagIds.size() != 0">
+            AND EXISTS (
+            SELECT 1
+            FROM article_tag at
+            WHERE
+            at.article_id = art.id
+            AND at.tag_id IN
+            <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">#{tagId}</foreach>
+            )
+        </if>
+        ORDER BY art.created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="queryPageWhitAndTag" resultType="top.gosleep.blog.bean.dto.ArticleSummaryDTO">
+        SELECT
+        art.id,
+        art.title,
+        art.summary,
+        art.author_id as authorId,
+        u.nickname as authorName,
+        art.is_published as isPublished,
+        art.created_at as createdAt,
+        art.category_id as categoryId
+        FROM article art
+        JOIN category c ON art.category_id = c.id
+        JOIN user u ON art.author_id = u.id
+        WHERE
+        art.is_deleted = 0
+        <if test="isPublished != null">
+            AND art.is_published = #{isPublished}
+        </if>
+        <if test="userId != null">
+            AND art.author_id = #{userId}
+        </if>
+        <if test="categoryId != 0">
+            AND (
+            c.id = #{categoryId}
+            OR c.level1_id = #{categoryId}
+            OR c.level2_id = #{categoryId}
+            )
+        </if>
+        <if test="tagIds.size() != 0">
+            AND art.id IN (
+            SELECT at.article_id as id
+            FROM article_tag at
+            WHERE at.tag_id IN
+            <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">#{tagId}</foreach>
+            GROUP BY at.article_id
+            HAVING COUNT(DISTINCT at.tag_id) = #{tagSize}
+            )
+        </if>
+        ORDER BY art.created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="queryTags" resultType="top.gosleep.blog.bean.dto.ArticleTagDTO">
+        SELECT
+        at.article_id as articleId,
+        t.id as tagId,
+        t.name as tagName
+        FROM article_tag at
+        JOIN tag t ON at.tag_id = t.id
+            WHERE at.article_id IN
+        <foreach collection="articleIds" item="articleId" open="(" separator="," close=")">#{articleId}</foreach>
+    </select>
+
+    <select id="countArticlesOr" resultType="long">
+        SELECT COUNT(DISTINCT art.id)
+        FROM article art
+        JOIN category c ON art.category_id = c.id
+        WHERE art.is_deleted = 0
+        <if test="isPublished != null">
+            AND art.is_published = #{isPublished}
+        </if>
+        <if test="userId != null">
+            AND art.author_id = #{userId}
+        </if>
+        <if test="categoryId != 0">
+            AND (c.id = #{categoryId} OR c.level1_id = #{categoryId} OR c.level2_id = #{categoryId})
+        </if>
+        <if test="tagIds.size() != 0">
+            AND EXISTS (
+            SELECT 1 FROM article_tag at
+            WHERE at.article_id = art.id AND at.tag_id IN
+            <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">#{tagId}</foreach>
+            )
+        </if>
+    </select>
+
+    <select id="countArticlesAnd" resultType="long">
+        SELECT COUNT(DISTINCT art.id)
+        FROM article art
+        JOIN category c ON art.category_id = c.id
+        WHERE art.is_deleted = 0
+        <if test="isPublished != null">
+            AND art.is_published = #{isPublished}
+        </if>
+        <if test="userId != null">
+            AND art.author_id = #{userId}
+        </if>
+        <if test="categoryId != 0">
+            AND (c.id = #{categoryId} OR c.level1_id = #{categoryId} OR c.level2_id = #{categoryId})
+        </if>
+        <if test="tagIds.size() != 0">
+            AND art.id IN (
+            SELECT at.article_id FROM article_tag at
+            WHERE at.tag_id IN
+            <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">#{tagId}</foreach>
+            GROUP BY at.article_id
+            HAVING COUNT(DISTINCT at.tag_id) = #{tagSize}
+            )
+        </if>
+    </select>
+
+    <select id="randomPublishedArticle" resultType="java.lang.Long">
+        SELECT id
+        FROM article
+        WHERE is_published = 1
+          AND is_deleted = 0
+        ORDER BY RANDOM()
+        LIMIT 1
+    </select>
+</mapper>

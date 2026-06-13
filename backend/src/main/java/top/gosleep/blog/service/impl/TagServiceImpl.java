@@ -2,10 +2,8 @@ package top.gosleep.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import top.gosleep.blog.bean.entity.ArticleTag;
-import top.gosleep.blog.bean.vo.TagVO;
 import top.gosleep.blog.bean.entity.Tag;
-import top.gosleep.blog.event.ArticleChangedEvent;
-import top.gosleep.blog.event.ChangeType;
+import top.gosleep.blog.common.context.UserContext;
 import top.gosleep.blog.mapper.ArticleMapper;
 import top.gosleep.blog.mapper.ArticleTagMapper;
 import top.gosleep.blog.mapper.TagMapper;
@@ -19,7 +17,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class TagServiceImpl implements TagService {
-
     private final TagMapper tagMapper;
     private final ArticleTagMapper articleTagMapper;
 
@@ -28,41 +25,35 @@ public class TagServiceImpl implements TagService {
         this.articleTagMapper = articleTagMapper;
     }
 
-    public List<TagVO> list() {
-        return tagMapper.selectList(null).stream()
-                .map(TagVO::fromEntity)
-                .toList();
+    @Override
+    public List<Tag> listAll() {
+        return tagMapper.selectList(null);
     }
 
     @Override
-    public List<TagVO> getByArticleId(Long articleId) {
-        return tagMapper.getByArticleId(articleId).stream().map(TagVO::fromEntity).toList();
+    public List<Tag> listByArticle(Long articleId) {
+        List<ArticleTag> ats = articleTagMapper.selectList(new LambdaQueryWrapper<ArticleTag>()
+                .eq(ArticleTag::getArticleId, articleId));
+        return tagMapper.selectBatchIds(ats.stream().map(ArticleTag::getTagId).toList());
     }
 
-    public Map<Long, String> map() {
-        return tagMapper.selectList(null)
-                .stream()
-                .collect(Collectors.toMap(Tag::getId, Tag::getName));
-    }
+    @Override
+    public Tag makeExist(String name) {
+        UserContext.requireAdmin(); // 授权
 
-    @Transactional
-    public Tag create(String name) {
         Tag tag = tagMapper.selectOne(new LambdaQueryWrapper<Tag>().eq(Tag::getName, name));
-        if (tag != null) return tag;
-        tag = new Tag();
-        tag.setName(name);
-        tagMapper.insert(tag);
+        if (tag == null) {
+            tag = new Tag();
+            tag.setName(name);
+            tagMapper.insert(tag);
+        }
         return tag;
     }
 
-    public void saveTags(Long articleId, List<Long> tagIds) {
-        if (tagIds != null) {
-            for (Long tagId : tagIds) {
-                ArticleTag at = new ArticleTag();
-                at.setArticleId(articleId);
-                at.setTagId(tagId);
-                articleTagMapper.insert(at);
-            }
-        }
+    @Override
+    public void updateArticleTags(Long articleId, List<Long> tagIds) {
+        // todo 优化，比较是否真更新等，表内字段复用，避免频繁 delete
+        articleTagMapper.delete(new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getArticleId, articleId));
+        articleTagMapper.insert(tagIds.stream().map(tagId -> new ArticleTag(articleId, tagId)).toList());
     }
 }

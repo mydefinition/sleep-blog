@@ -1,26 +1,19 @@
 package top.gosleep.blog.service;
 
-import top.gosleep.blog.bean.entity.FileStorage;
-import top.gosleep.blog.model.FileTreeNode;
 import org.springframework.web.multipart.MultipartFile;
+import top.gosleep.blog.bean.entity.FileStorage;
+
 import java.io.IOException;
+import java.nio.file.Path;
 
+/**负责本地文件存储  */
 public interface FileStorageService {
-    /** 获取文件树 JSON（缓存） */
-    String getTreeJson();
 
-    /** 上传文件 */
-    FileTreeNode upload(Long userId, MultipartFile file, Long localId) throws IOException;
+    FileStorage queryById(Long fileId);
 
-    /** 新建文件夹 */
-    FileTreeNode mkdir(String name, Long localId);
+    FileStorage store(MultipartFile file) throws IOException;
 
-    /** 删除文件或文件夹（递归） */
-    void delete(Long id);
+    Path getPath(FileStorage fileStorage);
 
-    /** 查单个节点（供下载） */
-    FileStorage getById(Long id);
-
-    /** 计算磁盘绝对路径 */
-    String absolutePath(Long id);
+    void deleteById(Long fileId);
 }

@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.blog</groupId>
-    <artifactId>sample-blog</artifactId>
+    <artifactId>sleep-blog</artifactId>
     <version>1.0.0</version>
     <name>sample-blog</name>
 
@@ -27,7 +27,20 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Security + JWT -->
+        <!-- Spring Mail -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -61,6 +74,11 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.45.3.0</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.jeffreyning</groupId>-->
+<!--            <artifactId>mybatisplus-plus</artifactId>-->
+<!--            <version>1.5.1-RELEASE</version>-->
+<!--        </dependency>-->
 
         <!-- Knife4j API -->
         <dependency>

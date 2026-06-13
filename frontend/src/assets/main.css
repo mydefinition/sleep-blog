@@ -86,3 +86,25 @@
   }
 
 }
+
+@layer components {
+    /* 药丸：主题色满背景 + 白字 */
+    .pill-solid {
+        background: var(--primary);
+        color: #fff;
+        border-radius: 0.5rem;
+    }
+    /* 半药丸：主题色 15% 背景 + 主题色字 */
+    .pill-ghost {
+        background: color-mix(in srgb, var(--primary) 15%, transparent);
+        color: var(--primary);
+        border-radius: 0.5rem;
+    }
+    /* 描边：主题色边框 + 主题色字 + 白底 */
+    .pill-outline {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: #fff;
+        border-radius: 0.5rem;
+    }
+}

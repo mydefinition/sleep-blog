@@ -1,43 +1,53 @@
 package top.gosleep.blog.service.impl;
 
-import top.gosleep.blog.common.PathUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import top.gosleep.blog.bean.entity.ArticleImage;
+import top.gosleep.blog.bean.entity.FileStorage;
+import top.gosleep.blog.common.context.UserContext;
+import top.gosleep.blog.config.WebMvcConfig;
+import top.gosleep.blog.mapper.ArticleImageMapper;
+import top.gosleep.blog.mapper.ArticleMapper;
+import top.gosleep.blog.service.FileStorageService;
 import top.gosleep.blog.service.ImageService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.annotation.PostConstruct;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    @Value("${app.storage.image-upload}")
-    private String imageDir;
+    private final FileStorageService fileStorageService;
+    private final ArticleImageMapper articleImageMapper;
+    private final ArticleMapper articleMapper;
 
-    @PostConstruct
-    void init() {
-        imageDir = PathUtil.absolute(imageDir);
+    public ImageServiceImpl(FileStorageService fileStorageService, ArticleImageMapper articleImageMapper, ArticleMapper articleMapper) {
+        this.fileStorageService = fileStorageService;
+        this.articleImageMapper = articleImageMapper;
+        this.articleMapper = articleMapper;
     }
 
-    public String upload(MultipartFile file) throws IOException {
-        Path dir = Paths.get(imageDir);
-        if (!Files.exists(dir)) {
-            Files.createDirectories(dir);
-        }
+    @Override
+    public String upload(Long articleId, MultipartFile file) throws IOException {
+        UserContext.requireAdminId(articleMapper.selectAuthor(articleId).getId());
 
-        String originalName = file.getOriginalFilename();
-        String ext = originalName != null && originalName.contains(".")
-                ? originalName.substring(originalName.lastIndexOf(".")) : "";
-        String filename = UUID.randomUUID() + ext;
-
-        Path target = dir.resolve(filename);
-        file.transferTo(target.toFile());
-
-        return "/storage/" + filename;
+        FileStorage recode = fileStorageService.store(file);
+        ArticleImage ai = new ArticleImage(articleId, recode.getId());
+        articleImageMapper.insert(ai);
+        return WebMvcConfig.STORAGE_URL_PREFIX + recode.getName();
     }
+
+    @Override
+    public List<FileStorage> queryByArticleId(Long articleId) {
+        return articleImageMapper.queryByArticleId(articleId);
+    }
+
+    public void deleteById(Long fileStorageId) {
+        articleImageMapper.delete(
+                new LambdaQueryWrapper<ArticleImage>().eq(ArticleImage::getFileId, fileStorageId)
+        );
+        fileStorageService.deleteById(fileStorageId);
+    }
+
 }

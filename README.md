@@ -1,7 +1,5 @@
 ﻿# Sleep Blog
 
-> 为了我的宝贝写了非常详细的 **README**.
-
 ## 简介
 
 基于 ***Vue 3*** + ***Spring Boot*** 的个人博客系统。拥有写读文章、***Agent*** 自动新闻发布、文件存储等功能。
@@ -204,6 +202,16 @@ cp run.sh release/
 server:
   port: 80
 
+spring:
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
+app:
+  storage-path: ${APP_STORAGE_PATH}
+
 springdoc:
   swagger-ui:
     enabled: false
@@ -212,16 +220,6 @@ springdoc:
 
 knife4j:
   enable: false
-
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
-
-app:
-  storage:
-    image-upload: /data/storage/images
-    filestorage-root: /data/storage/files
-  super-secret: 请替换为强随机密钥
 ```
 
 ### 监听端口
@@ -232,6 +230,24 @@ app:
 server:
   port: 80
 ```
+
+### 邮件系统
+
+```yaml
+spring:
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+```
+
+| 配置项                 | 环境变量        | 默认值     | 说明                                                         |
+| :--------------------- | :-------------- | :--------- | :----------------------------------------------------------- |
+| `spring.mail.host`     | `MAIL_HOST`     | 无（必填） | 邮件服务器地址，例如：`smtp.163.com`、`smtp.qq.com`、`smtp.gmail.com` |
+| `spring.mail.port`     | `MAIL_PORT`     | `587`      | 邮件服务器端口号。需邮件服务器支持，常用如下：<br/>`25`：标准SMTP端口（不加密）<br/>`465`：SSL加密端口<br/>`587`：TLS加密端口（推荐） |
+| `spring.mail.username` | `MAIL_USERNAME` | 无（必填） | 发件人的完整邮箱地址，例如：`your-email@163.com`             |
+| `spring.mail.password` | `MAIL_PASSWORD` | 无（必填） | 邮箱授权码或登录密码。常用的如 **QQ邮箱/163邮箱**：需在邮箱设置中开启SMTP服务，获取**授权码**（不是登录密码），**Gmail**：需使用应用专用密码 |
 
 ### 在线文档
 
@@ -281,27 +297,12 @@ mybatis-plus:
 
 ### 存储路径
 
-博客需存储文章 **Markdown** 中的图片，以及云文件系统的文件，从根目录起配置路径：
+博客需存储文章 **Markdown** 中的图片，以及云文件系统的文件。
 
 ```yaml
 app:
-  storage:
-    image-upload: /data/storage/images
-    filestorage-root: /data/storage/files
+  storage-path: ${APP_STORAGE_PATH}
 ```
-
-`image-upload` 为云文件系统中的文件存储路径，`filestorage-root` 为 上传至 **Markdown** 中图片的存储路径。
-
-### 高级（超级）权限
-
-为方便调试，博客携带一组 **super API**，请求时需在 `Header` 中携带 `super-token`，其内容为配置文件中的 `super-secret`：
-
-```yaml
-app:
-  super-secret: 请替换为强随机密钥
-```
-
-> 注意区分`super-secret` 与 `super-token`，该历史遗留问题尚未解决。
 
 ## 部署
 

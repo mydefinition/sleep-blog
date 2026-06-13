@@ -1,4 +1,4 @@
-# sample-blog build script (Windows PowerShell)
+# sleep-blog build script (Windows PowerShell)
 # Usage: .\build.ps1 [frontend|backend|all]
 #   frontend  - Build frontend only (Vue + Vite)
 #   backend   - Build backend only (Maven, no frontend resources)
@@ -42,7 +42,7 @@ function Package-Release {
     if (-not (Test-Path $releaseDir)) {
         New-Item -ItemType Directory -Path $releaseDir | Out-Null
     }
-    Copy-Item -Path "$root\backend\target\sample-blog-1.0.0.jar" -Destination $releaseDir -Force
+    Copy-Item -Path "$root\backend\target\sleep-blog-1.0.0.jar" -Destination $releaseDir -Force
     Copy-Item -Path "$root\application-prod.yml" -Destination $releaseDir -Force
     Copy-Item -Path "$root\run.sh" -Destination $releaseDir -Force
 

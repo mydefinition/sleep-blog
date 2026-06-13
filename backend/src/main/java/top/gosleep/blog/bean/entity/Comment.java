@@ -13,6 +13,7 @@ public class Comment {
     private String content;
     private Long articleId;
     private Long userId;
+    @TableLogic
     private Integer isDeleted;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;

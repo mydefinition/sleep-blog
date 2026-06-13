@@ -1,5 +1,12 @@
-﻿server:
-  port: 80
+﻿spring:
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
+app:
+  storage-path: ${APP_STORAGE_PATH}
 
 springdoc:
   swagger-ui:
@@ -9,13 +16,3 @@ springdoc:
 
 knife4j:
   enable: false
-
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
-
-app:
-  storage:
-    image-upload: /data/storage/images
-    filestorage-root: /data/storage/files
-  super-secret: 请替换为强随机密钥

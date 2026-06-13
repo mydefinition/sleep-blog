@@ -8,38 +8,39 @@
     </aside>
 
     <div class="flex-1 min-w-0 max-w-[680px]" ref="mainRef">
-      <h1 class="text-[1.8rem] mb-2 px-[5px] pb-2 inline-block border-b-[3px] border-solid"
-          :style="{ borderBottomColor: settings.primary }">{{ article.title }}</h1>
+      <!-- 分类路径 -->
+      <p v-if="categoryPath" class="text-[0.8rem] text-gray-400 m-0 mb-1">{{ categoryPath }}</p>
 
+      <!-- 标题行：标题 + 编辑删除居右 -->
+      <div class="flex items-end justify-between gap-4 mb-2">
+        <h1 class="text-[1.8rem] px-[5px] pb-0 inline-block border-b-[3px] border-solid"
+            :style="{ borderBottomColor: settings.primary }">{{ article.title }}</h1>
+        <div v-if="canEdit" class="flex items-center gap-3 shrink-0 pb-1">
+          <router-link :to="'/write/' + article.id"
+                       class="inline-flex items-center gap-[3px] no-underline font-semibold text-[0.85rem] font-sans cursor-pointer hover:opacity-80 transition-opacity duration-150"
+                       :style="{ color: settings.primary }">
+            <Pencil :size="14"/> 编辑
+          </router-link>
+          <button @click="deleteArticle"
+                  class="inline-flex items-center gap-[3px] no-underline font-semibold text-[0.85rem] font-sans cursor-pointer bg-transparent border-none p-0 hover:opacity-80 transition-opacity duration-150"
+                  :style="{ color: settings.primary }">
+            <Trash2 :size="14"/> 删除
+          </button>
+        </div>
+      </div>
+
+      <!-- 元信息行：日期、作者、标签居右 -->
       <div class="text-gray-400 text-[0.85rem] my-2 mb-4 flex gap-4 items-center flex-wrap">
-        <span class="inline-flex items-center gap-1 whitespace-nowrap"><Calendar
-            :size="14"/> {{ formatDate(article.createdAt) }}</span>
-        <span class="inline-flex items-center gap-1 whitespace-nowrap"><User :size="14"/> {{
-            article.authorName
-          }}</span>
-        <span v-if="article.updatedAt"
-              class="inline-flex items-center gap-1 whitespace-nowrap">修改于 {{ formatDate(article.updatedAt) }}</span>
-        <router-link v-if="auth.isAdmin" :to="'/write/' + article.id"
-                     class="inline-flex items-center gap-[3px] no-underline font-semibold text-[0.85rem] font-sans cursor-pointer bg-transparent border-none p-0 ml-auto hover:opacity-80 transition-opacity duration-150"
-                     :style="{ color: settings.primary }">
-          <Pencil :size="14"/>
-          编辑
-        </router-link>
-        <button v-if="auth.isAdmin" @click="deleteArticle"
-                class="inline-flex items-center gap-[3px] no-underline font-semibold text-[0.85rem] font-sans cursor-pointer bg-transparent border-none p-0 ml-3 hover:opacity-80 transition-opacity duration-150"
-                :style="{ color: settings.primary }">
-          <Trash2 :size="14"/>
-          删除
-        </button>
+        <span class="inline-flex items-center gap-1 whitespace-nowrap"><Calendar :size="14"/> {{ formatDate(article.createdAt) }}</span>
+        <span class="inline-flex items-center gap-1 whitespace-nowrap"><User :size="14"/> {{ article.authorName }}</span>
+        <span v-if="article.updatedAt" class="inline-flex items-center gap-1 whitespace-nowrap">修改于 {{ formatDate(article.updatedAt) }}</span>
+        <div v-if="article.tags.length" class="flex flex-wrap gap-2 ml-auto">
+          <span v-for="t in article.tags" :key="t.id"
+                class="inline-flex items-center gap-[3px] text-[0.85rem] text-gray-500"><Tag :size="14"/> {{ t.name }}</span>
+        </div>
       </div>
 
-      <div v-if="article.tags.length" class="flex flex-wrap gap-4 mb-4">
-        <span v-for="t in article.tags" :key="t.id"
-              class="inline-flex items-center gap-[3px] text-[0.85rem] text-gray-500"><Tag :size="14"/> {{
-            t.name
-          }}</span>
-      </div>
-
+      <!-- 分隔线 -->
       <div class="flex items-center gap-3 mb-0">
         <span class="flex-1 border-b border-dashed border-gray-200"></span>
         <Scissors :size="16" class="shrink-0 text-gray-300 scale-x-[-1]"/>
@@ -72,11 +73,10 @@
                     class="w-full px-2.5 py-2 border border-gray-200 rounded-md resize-y font-sans"></textarea>
           <button @click="postComment" :disabled="!commentText.trim()"
                   class="mt-2 px-5 py-1.5 text-white border-none rounded-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity duration-150"
-                  :style="{ background: settings.primary }">发表评论
-          </button>
+                  :style="{ background: settings.primary }">发表评论</button>
         </div>
         <p v-else>
-          <router-link to="/login">登录</router-link>
+          <button @click="openAuth('login')" class="text-primary bg-transparent border-none cursor-pointer p-0 text-inherit underline">登录</button>
           后发表评论
         </p>
         <div v-if="comments.length" class="flex flex-col gap-4">
@@ -86,8 +86,7 @@
               <span>{{ formatDate(c.createdAt) }}</span>
               <button v-if="auth.isAdmin"
                       class="ml-auto px-2 py-0.5 border-none bg-[#ff5252] text-white rounded cursor-pointer text-xs"
-                      @click="deleteComment(c.id)">删除
-              </button>
+                      @click="deleteComment(c.id)">删除</button>
             </div>
             <p>{{ c.content }}</p>
           </div>
@@ -103,25 +102,26 @@
 <script setup lang="ts">
 import MdPreview from 'md-editor-v3/lib/es/MdPreview.mjs'
 import MdCatalog from 'md-editor-v3/lib/es/MdCatalog.mjs'
-import {ref, onMounted, onUnmounted, computed, watch} from 'vue'
+import {ref, onMounted, onUnmounted, computed, watch, inject} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {api} from '@/api'
 import {useAuthStore} from '@/stores/auth'
 import {useSettingsStore} from '@/stores/settings'
 import {Calendar, User, Pencil, Trash2, Tag, Scissors, ChevronLeft, ChevronRight} from 'lucide-vue-next'
 import 'md-editor-v3/lib/style.css'
-import type {Article, Comment} from '@/types'
+import type {ArticleDetail, Comment} from '@/types'
 
 const route = useRoute();
 const router = useRouter()
 const auth = useAuthStore();
 const settings = useSettingsStore()
-const article = ref<Article | null>(null)
+const article = ref<ArticleDetail | null>(null)
 const comments = ref<Comment[]>([]);
 const commentText = ref('')
 const loading = ref(true)
 const displayContent = computed(() => article.value?.content || '')
-const allArticles = ref<Article[]>([])
+const allArticles = ref<ArticleDetail[]>([])
+const openAuth = inject<(tab: 'login' | 'register') => void>('openAuth', () => {})
 const neighbors = computed(() => {
   const idx = allArticles.value.findIndex(a => a.id === Number(route.params.id))
   return {
@@ -130,9 +130,25 @@ const neighbors = computed(() => {
   }
 })
 
+// SUPER 全可见，ADMIN 只看自己
+const canEdit = computed(() => {
+  if (!auth.user) return false
+  if (auth.user.role === 'SUPER') return true
+  return auth.user.role === 'ADMIN' && auth.user.id === article.value?.authorId
+})
+
+const categoryPath = computed(() => {
+  const c = article.value?.categoryLevel
+  if (!c) return ''
+  return [c.level1, c.level2, c.level3]
+      .filter(Boolean)
+      .map(i => i!.name)
+      .join(' / ')
+})
+
 async function fetchArticle() {
   try {
-    const res = await api.get('/api/articles/' + route.params.id);
+    const res = await api.get('/api/article/' + route.params.id);
     article.value = res.data
   } catch {
     router.push('/articles')
@@ -173,7 +189,7 @@ async function deleteComment(id: number) {
 async function deleteArticle() {
   if (!confirm('确定删除这篇文章？')) return;
   try {
-    await api.delete('/api/articles/' + route.params.id);
+    await api.delete('/api/article/' + route.params.id);
     router.push('/articles')
   } catch (e: any) {
     alert(e.message || '删除失败')

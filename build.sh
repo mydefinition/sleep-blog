@@ -1,5 +1,5 @@
 ﻿#!/bin/bash
-# sample-blog build script (Linux / macOS)
+# sleep-blog build script (Linux / macOS)
 # Usage: ./build.sh [frontend|backend|all]
 #   frontend  - Build frontend only (Vue + Vite)
 #   backend   - Build backend only (Maven, no frontend resources)
@@ -40,7 +40,7 @@ copy_frontend_to_static() {
 package_release() {
   echo "=== Packaging release ==="
   mkdir -p "$ROOT/release"
-  cp "$ROOT/backend/target/sample-blog-1.0.0.jar" "$ROOT/release/"
+  cp "$ROOT/backend/target/sleep-blog-1.0.0.jar" "$ROOT/release/"
   cp "$ROOT/application-prod.yml" "$ROOT/release/"
   cp "$ROOT/run.sh" "$ROOT/release/"
 
